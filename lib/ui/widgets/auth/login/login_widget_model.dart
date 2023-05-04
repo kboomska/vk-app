@@ -1,10 +1,17 @@
 import 'package:flutter/material.dart';
 
 import 'package:vk_app/ui/navigation/main_navigation.dart';
+import 'package:vk_app/domain/api_client/api_client.dart';
 
 class LoginWidgetModel extends ChangeNotifier {
+  final _client = ApiClient();
+  String _token = '';
+
   // String _login = '';
   String _login = 'admin@mail.ru'; // For testing only!
+  final loginTextController =
+      TextEditingController(text: 'admin@mail.ru'); // For testing only!
+
   String? _errorText;
 
   bool get isLogin => _login.isNotEmpty;
@@ -17,6 +24,23 @@ class LoginWidgetModel extends ChangeNotifier {
       _errorText = null;
     }
     notifyListeners();
+  }
+
+  Future<void> auth(BuildContext context) async {
+    final clientId = loginTextController.text;
+    String response = '';
+
+    // await _apiClient.getToken(clientId);
+
+    try {
+      response = await _client.auth(context, clientId);
+      _token = _client.getResponseFragments(response)['access_token'];
+    } catch (error) {
+      print('Ошибка авторизации');
+    }
+
+    print('Auth response: $response');
+    print('Auth token: $_token');
   }
 
   void goToPasswordScreen(BuildContext context) {

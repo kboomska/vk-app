@@ -119,20 +119,21 @@ class _LoginFormWidget extends StatefulWidget {
 
 class _LoginFormWidgetState extends State<_LoginFormWidget> {
   // final _loginTextController = TextEditingController();
-  final _loginTextController =
-      TextEditingController(text: 'admin@mail.ru'); // For testing only!
+  // final _loginTextController =
+  //     TextEditingController(text: 'admin@mail.ru'); // For testing only!
 
   @override
   Widget build(BuildContext context) {
     final model = LoginWidgetModelProvider.noticeOf(context)?.model;
     final errorText = model?.errorText;
+    final loginTextController = model?.loginTextController;
 
     InkWell suffixIcon = InkWell(
       splashColor: Colors.transparent,
       highlightColor: Colors.transparent,
       onTap: () {
         model?.login = '';
-        _loginTextController.text = '';
+        loginTextController?.text = '';
       },
       child: const Icon(
         Icons.highlight_off,
@@ -145,7 +146,7 @@ class _LoginFormWidgetState extends State<_LoginFormWidget> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         TextField(
-          controller: _loginTextController,
+          controller: loginTextController,
           style: const TextStyle(
             fontSize: 16,
           ),
@@ -207,9 +208,10 @@ class _SingInButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final model = LoginWidgetModelProvider.readOnly(context)?.model;
+
     return OutlinedButton(
-      onPressed:
-          LoginWidgetModelProvider.readOnly(context)?.model.goToSignInScreen,
+      onPressed: () => model?.auth(context),
       style: AppButtonStyle.greenStyleButton,
       child: const Text(
         'Зарегистрироваться',
