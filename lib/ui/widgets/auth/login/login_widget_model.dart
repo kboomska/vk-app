@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 
+import 'package:vk_app/domain/data_provider/access_data_provider.dart';
 import 'package:vk_app/ui/navigation/main_navigation.dart';
 import 'package:vk_app/domain/api_client/api_client.dart';
 
 class LoginWidgetModel extends ChangeNotifier {
   final _client = ApiClient();
-  String _token = '';
+  final _accessDataProvider = AccessDataProvider();
 
   // String _login = '';
   String _login = 'admin@mail.ru'; // For testing only!
@@ -29,18 +30,28 @@ class LoginWidgetModel extends ChangeNotifier {
   Future<void> auth(BuildContext context) async {
     final clientId = loginTextController.text;
     String response = '';
+    String? accessToken;
 
     // await _apiClient.getToken(clientId);
 
     try {
       response = await _client.auth(context, clientId);
-      _token = _client.getResponseFragments(response)['access_token'];
+      accessToken = _client.getResponseFragments(response)['access_token'];
     } catch (error) {
-      print('Ошибка авторизации');
+      // print('Ошибка авторизации');
     }
 
     print('Auth response: $response');
-    print('Auth token: $_token');
+    print('Auth token: $accessToken');
+
+    if (accessToken == null) {
+      _errorText = 'Ошибка авторизации, повторите попытку';
+      notifyListeners();
+      return;
+    }
+
+    await _accessDataProvider.setAccessToken(accessToken);
+    Navigator.of(context).pushReplacementNamed(MainNavigationRouteNames.home);
   }
 
   void goToPasswordScreen(BuildContext context) {
