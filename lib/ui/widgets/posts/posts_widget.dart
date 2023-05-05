@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import 'package:vk_app/domain/data_provider/access_data_provider.dart';
 import 'package:vk_app/ui/widgets/posts/posts_widget_model.dart';
 import 'package:vk_app/theme/app_colors.dart';
 
@@ -29,6 +30,12 @@ class _PostsWidgetState extends State<PostsWidget> {
             fontWeight: FontWeight.w500,
           ),
         ),
+        actions: [
+          IconButton(
+            onPressed: () => AccessDataProvider().setAccessToken(null),
+            icon: const Icon(Icons.logout),
+          ),
+        ],
       ),
       body: PostsWidgetModelProvider(
         model: model,

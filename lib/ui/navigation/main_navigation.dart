@@ -15,7 +15,8 @@ abstract class MainNavigationRouteNames {
 }
 
 class MainNavigation {
-  final initialRoute = MainNavigationRouteNames.login;
+  String initialRoute(bool isAuth) =>
+      isAuth ? MainNavigationRouteNames.home : MainNavigationRouteNames.login;
 
   final routes = <String, Widget Function(BuildContext)>{
     MainNavigationRouteNames.login: (context) => const LoginWidget(),
