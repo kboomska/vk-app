@@ -11,6 +11,7 @@ class ApiClient {
   static const _display = 'mobile';
   static const _scope = '1026';
   static const _responseType = 'token';
+  static const _language = 'ru';
 
   Uri _makeUri(String path, [Map<String, dynamic>? parameters]) {
     final uri = Uri.parse('$_host$path');
@@ -41,6 +42,7 @@ class ApiClient {
       'display': _display,
       'scope': _scope,
       'response_type': _responseType,
+      'lang': _language,
     };
 
     final authorizationUri = _makeUri(
