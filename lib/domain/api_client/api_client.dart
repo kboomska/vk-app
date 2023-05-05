@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:vk_app/ui/navigation/main_navigation.dart';
 
 import 'package:vk_app/ui/widgets/auth/web_page/web_page.dart';
 
@@ -34,8 +35,8 @@ class ApiClient {
     return authResponse;
   }
 
-  Future<String> auth(BuildContext context, String clientId) async {
-    String response = '';
+  Future<String?> auth(BuildContext context, String clientId) async {
+    String? response;
 
     final parameters = <String, dynamic>{
       'client_id': clientId,
@@ -53,17 +54,14 @@ class ApiClient {
 
     // print(authorizationUri);
 
+    final configuration = WebPageConfiguration(
+      authorizationUri,
+      _redirectUri,
+    );
+
     await Navigator.of(context)
-        .push(MaterialPageRoute(
-            builder: (context) => WebPageWidget(
-                  uri: authorizationUri,
-                  tokenEndpoint: _redirectUri,
-                )))
-        .then((value) {
-      if (value != null) {
-        response = value;
-      }
-    });
+        .pushNamed(MainNavigationRouteNames.oauth, arguments: configuration)
+        .then((value) => response = value as String?);
 
     return response;
   }

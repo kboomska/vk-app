@@ -3,14 +3,22 @@ import 'package:flutter/material.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 import 'package:vk_app/theme/app_colors.dart';
 
-class WebPageWidget extends StatefulWidget {
+class WebPageConfiguration {
   final Uri uri;
   final String tokenEndpoint;
 
+  WebPageConfiguration(
+    this.uri,
+    this.tokenEndpoint,
+  );
+}
+
+class WebPageWidget extends StatefulWidget {
+  final WebPageConfiguration configuration;
+
   const WebPageWidget({
     super.key,
-    required this.uri,
-    required this.tokenEndpoint,
+    required this.configuration,
   });
 
   @override
@@ -24,7 +32,7 @@ class _WebPageWidgetState extends State<WebPageWidget> {
   Widget build(BuildContext context) {
     Future<void> backToLoginScreen(
       BuildContext context, {
-      String response = '',
+      String? response,
     }) async {
       await WebViewCookieManager().clearCookies();
       await controller.clearLocalStorage();
@@ -37,7 +45,7 @@ class _WebPageWidgetState extends State<WebPageWidget> {
       ..setNavigationDelegate(
         NavigationDelegate(
           onNavigationRequest: (NavigationRequest request) async {
-            if (request.url.startsWith(widget.tokenEndpoint)) {
+            if (request.url.startsWith(widget.configuration.tokenEndpoint)) {
               await backToLoginScreen(context, response: request.url);
               return NavigationDecision.prevent;
             }
@@ -45,7 +53,7 @@ class _WebPageWidgetState extends State<WebPageWidget> {
           },
         ),
       )
-      ..loadRequest(widget.uri);
+      ..loadRequest(widget.configuration.uri);
 
     return WillPopScope(
       onWillPop: () async {

@@ -29,26 +29,31 @@ class LoginWidgetModel extends ChangeNotifier {
 
   Future<void> auth(BuildContext context) async {
     final clientId = loginTextController.text;
-    String response = '';
+    String? response;
     String? accessToken;
 
-    // await _apiClient.getToken(clientId);
-
+    _errorText = null;
     try {
       response = await _client.auth(context, clientId);
-      accessToken = _client.getResponseFragments(response)['access_token'];
     } catch (error) {
-      // print('Ошибка авторизации');
+      _errorText = 'Неизвестная ошибка';
     }
 
     print('Auth response: $response');
-    print('Auth token: $accessToken');
 
-    if (accessToken == null) {
+    if (_errorText != null) {
+      notifyListeners();
+      return;
+    }
+
+    if (response == null) {
       _errorText = 'Ошибка авторизации, повторите попытку';
       notifyListeners();
       return;
     }
+
+    accessToken = _client.getResponseFragments(response)['access_token'];
+    print('Auth token: $accessToken');
 
     await _accessDataProvider.setAccessToken(accessToken);
     Navigator.of(context).pushReplacementNamed(MainNavigationRouteNames.home);
