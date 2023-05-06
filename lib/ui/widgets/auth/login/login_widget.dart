@@ -14,8 +14,6 @@ class LoginWidget extends StatefulWidget {
 }
 
 class _LoginWidgetState extends State<LoginWidget> {
-  final _model = LoginWidgetModel();
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -31,15 +29,12 @@ class _LoginWidgetState extends State<LoginWidget> {
           horizontal: 16,
           vertical: 16,
         ),
-        child: NotifierProvider(
-          model: _model,
-          child: Column(
-            children: const [
-              _HeaderOfLoginWidget(),
-              SizedBox(height: 20),
-              _FormOfLoginWidget(),
-            ],
-          ),
+        child: Column(
+          children: const [
+            _HeaderOfLoginWidget(),
+            SizedBox(height: 20),
+            _FormOfLoginWidget(),
+          ],
         ),
       ),
     );
@@ -111,22 +106,13 @@ class _FormOfLoginWidget extends StatelessWidget {
   }
 }
 
-class _LoginFormWidget extends StatefulWidget {
+class _LoginFormWidget extends StatelessWidget {
   const _LoginFormWidget({super.key});
-
-  @override
-  State<_LoginFormWidget> createState() => _LoginFormWidgetState();
-}
-
-class _LoginFormWidgetState extends State<_LoginFormWidget> {
-  // final _loginTextController = TextEditingController();
-  // final _loginTextController =
-  //     TextEditingController(text: 'admin@mail.ru'); // For testing only!
 
   @override
   Widget build(BuildContext context) {
     final model = NotifierProvider.watch<LoginWidgetModel>(context);
-    final errorText = model?.errorText;
+    final errorMessage = model?.errorMessage;
     final loginTextController = model?.loginTextController;
 
     InkWell suffixIcon = InkWell(
@@ -156,23 +142,22 @@ class _LoginFormWidgetState extends State<_LoginFormWidget> {
           onChanged: (text) => model?.login = text,
           decoration: AppTextField.inputDecoration(
             hintText: 'Введите почту',
-            isError: errorText != null,
+            isError: errorMessage != null,
             suffixIcon: model?.isLogin == true ? suffixIcon : null,
           ),
           keyboardType: TextInputType.emailAddress,
         ),
-        if (errorText != null) ...[
-          const SizedBox(
-            height: 8,
-          ),
-          Text(
-            errorText,
-            style: const TextStyle(
-              fontSize: 14,
-              color: AppColors.textFieldErrorText,
+        if (errorMessage != null)
+          Padding(
+            padding: const EdgeInsets.only(top: 8),
+            child: Text(
+              errorMessage,
+              style: const TextStyle(
+                fontSize: 14,
+                color: AppColors.textFieldErrorText,
+              ),
             ),
           ),
-        ],
       ],
     );
   }

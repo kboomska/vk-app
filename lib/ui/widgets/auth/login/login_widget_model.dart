@@ -13,16 +13,16 @@ class LoginWidgetModel extends ChangeNotifier {
   final loginTextController =
       TextEditingController(text: 'admin@mail.ru'); // For testing only!
 
-  String? _errorText;
+  String? _errorMessage;
 
   bool get isLogin => _login.isNotEmpty;
-  String? get errorText => _errorText;
+  String? get errorMessage => _errorMessage;
 
   set login(String value) {
     _login = value;
 
-    if (_errorText != null) {
-      _errorText = null;
+    if (_errorMessage != null) {
+      _errorMessage = null;
     }
     notifyListeners();
   }
@@ -32,22 +32,22 @@ class LoginWidgetModel extends ChangeNotifier {
     String? response;
     String? accessToken;
 
-    _errorText = null;
+    _errorMessage = null;
     try {
       response = await _client.auth(context, clientId);
     } catch (error) {
-      _errorText = 'Неизвестная ошибка';
+      _errorMessage = 'Неизвестная ошибка';
     }
 
     print('Auth response: $response');
 
-    if (_errorText != null) {
+    if (_errorMessage != null) {
       notifyListeners();
       return;
     }
 
     if (response == null) {
-      _errorText = 'Ошибка авторизации, повторите попытку';
+      _errorMessage = 'Ошибка авторизации, повторите попытку';
       notifyListeners();
       return;
     }
@@ -66,10 +66,10 @@ class LoginWidgetModel extends ChangeNotifier {
       Navigator.of(context)
           .pushNamed(MainNavigationRouteNames.password, arguments: login);
     } else if (login.isEmpty) {
-      _errorText = 'Не указана почта';
+      _errorMessage = 'Не указана почта';
       notifyListeners();
     } else {
-      _errorText = 'Неверный адрес почты';
+      _errorMessage = 'Неверный адрес почты';
       notifyListeners();
     }
   }
