@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'package:vk_app/ui/widgets/auth/password/password_widget_model.dart';
+import 'package:vk_app/Library/Widgets/Inherited/provider.dart';
 import 'package:vk_app/theme/app_button_style.dart';
 import 'package:vk_app/theme/app_text_field.dart';
 import 'package:vk_app/theme/app_colors.dart';
@@ -40,7 +41,7 @@ class _PasswordWidgetState extends State<PasswordWidget> {
           horizontal: 16,
           vertical: 16,
         ),
-        child: PasswordWidgetModelProvider(
+        child: NotifierProvider(
           model: _model,
           child: Column(
             children: const [
@@ -60,7 +61,7 @@ class _HeaderOfPasswordWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final model = PasswordWidgetModelProvider.readOnly(context)!.model;
+    final model = NotifierProvider.read<PasswordWidgetModel>(context)!;
 
     return Column(
       children: [
@@ -132,7 +133,7 @@ class _PasswordFormWidgetState extends State<_PasswordFormWidget> {
 
   @override
   Widget build(BuildContext context) {
-    final model = PasswordWidgetModelProvider.noticeOf(context)?.model;
+    final model = NotifierProvider.watch<PasswordWidgetModel>(context);
     final errorText = model?.errorText;
 
     InkWell suffixIcon = InkWell(
@@ -199,9 +200,8 @@ class _ForgottenPasswordButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return TextButton(
-      onPressed: PasswordWidgetModelProvider.readOnly(context)
-          ?.model
-          .forgottenPassword,
+      onPressed: NotifierProvider.read<PasswordWidgetModel>(context)
+          ?.forgottenPassword,
       style: AppButtonStyle.linkStyleButton,
       child: const Text(
         'Забыли или не установили пароль?',
@@ -221,7 +221,7 @@ class _ContinueButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final model = PasswordWidgetModelProvider.noticeOf(context)?.model;
+    final model = NotifierProvider.watch<PasswordWidgetModel>(context);
 
     return OutlinedButton(
       onPressed: model?.isPassword == true

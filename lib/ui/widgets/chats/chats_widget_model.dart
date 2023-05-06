@@ -68,28 +68,3 @@ class ChatsWidgetModel extends ChangeNotifier {
     super.dispose();
   }
 }
-
-class ChatsWidgetModelProvider extends InheritedNotifier {
-  final ChatsWidgetModel model;
-
-  const ChatsWidgetModelProvider({
-    super.key,
-    required this.model,
-    required Widget child,
-  }) : super(
-          notifier: model,
-          child: child,
-        );
-
-  static ChatsWidgetModelProvider? noticeOf(BuildContext context) {
-    return context
-        .dependOnInheritedWidgetOfExactType<ChatsWidgetModelProvider>();
-  }
-
-  static ChatsWidgetModelProvider? readOnly(BuildContext context) {
-    final widget = context
-        .getElementForInheritedWidgetOfExactType<ChatsWidgetModelProvider>()
-        ?.widget;
-    return widget is ChatsWidgetModelProvider ? widget : null;
-  }
-}

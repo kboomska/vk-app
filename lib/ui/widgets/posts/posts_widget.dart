@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:vk_app/Library/Widgets/Inherited/provider.dart';
 
 import 'package:vk_app/domain/data_provider/access_data_provider.dart';
 import 'package:vk_app/ui/widgets/posts/posts_widget_model.dart';
@@ -37,7 +38,7 @@ class _PostsWidgetState extends State<PostsWidget> {
           ),
         ],
       ),
-      body: PostsWidgetModelProvider(
+      body: NotifierProvider(
         model: model,
         child: const ColoredBox(
           color: AppColors.mainBackgroundColor,
@@ -56,7 +57,8 @@ class _PostListWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ListView.separated(
-      itemCount: PostsWidgetModelProvider.noticeOf(context)?.posts.length ?? 0,
+      itemCount:
+          NotifierProvider.watch<PostsWidgetModel>(context)?.posts.length ?? 0,
       separatorBuilder: (context, index) => const SizedBox(
         height: 8,
       ),
@@ -77,7 +79,7 @@ class _PostCardWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final post = PostsWidgetModelProvider.readOnly(context)!.posts[index];
+    final post = NotifierProvider.read<PostsWidgetModel>(context)!.posts[index];
 
     return DecoratedBox(
       decoration: BoxDecoration(
@@ -227,7 +229,7 @@ class _PostCardFooterWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final post = PostsWidgetModelProvider.readOnly(context)!.posts[index];
+    final post = NotifierProvider.read<PostsWidgetModel>(context)!.posts[index];
     return Padding(
       padding: const EdgeInsets.only(left: 8, right: 8, bottom: 8),
       child: Row(
@@ -296,14 +298,14 @@ class _PostCardLikeButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final post = PostsWidgetModelProvider.readOnly(context)!.posts[index];
+    final post = NotifierProvider.read<PostsWidgetModel>(context)!.posts[index];
     final int reactions = post.reactions;
     final bool isLiked = post.isLiked;
 
     return Material(
       borderRadius: BorderRadius.circular(16),
       child: InkWell(
-        onTap: () => PostsWidgetModelProvider.noticeOf(context)
+        onTap: () => NotifierProvider.watch<PostsWidgetModel>(context)
             ?.onTapLikeButton(index: index),
         borderRadius: BorderRadius.circular(16),
         child: Container(

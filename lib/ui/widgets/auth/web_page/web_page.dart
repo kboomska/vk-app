@@ -60,7 +60,6 @@ class _WebPageWidgetState extends State<WebPageWidget> {
         if (await controller.canGoBack()) {
           controller.goBack();
         } else {
-          print('Нет записи в истории');
           await backToLoginScreen(context);
         }
         return false;

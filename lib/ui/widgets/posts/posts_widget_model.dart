@@ -174,29 +174,3 @@ class PostsWidgetModel extends ChangeNotifier {
     notifyListeners();
   }
 }
-
-class PostsWidgetModelProvider extends InheritedNotifier<PostsWidgetModel> {
-  final PostsWidgetModel model;
-
-  const PostsWidgetModelProvider({
-    super.key,
-    required this.model,
-    required Widget child,
-  }) : super(
-          notifier: model,
-          child: child,
-        );
-
-  static PostsWidgetModel? noticeOf(BuildContext context) {
-    return context
-        .dependOnInheritedWidgetOfExactType<PostsWidgetModelProvider>()
-        ?.model;
-  }
-
-  static PostsWidgetModel? readOnly(BuildContext context) {
-    final widget = context
-        .getElementForInheritedWidgetOfExactType<PostsWidgetModelProvider>()
-        ?.widget;
-    return widget is PostsWidgetModelProvider ? widget.notifier : null;
-  }
-}

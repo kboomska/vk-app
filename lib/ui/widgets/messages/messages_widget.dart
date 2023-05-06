@@ -4,6 +4,7 @@ import 'package:flutter_slidable/flutter_slidable.dart';
 
 import 'package:vk_app/ui/widgets/message_form/message_form_widget.dart';
 import 'package:vk_app/ui/widgets/messages/messages_widget_model.dart';
+import 'package:vk_app/Library/Widgets/Inherited/provider.dart';
 import 'package:vk_app/theme/app_colors.dart';
 
 class MessagesWidgetConfiguration {
@@ -33,7 +34,7 @@ class _MessagesWidgetState extends State<MessagesWidget> {
 
   @override
   Widget build(BuildContext context) {
-    return MessagesWidgetModelProvider(
+    return NotifierProvider(
       model: _model,
       child: const _MessagesWidgetBody(),
     );
@@ -51,7 +52,7 @@ class _MessagesWidgetBody extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final model = MessagesWidgetModelProvider.noticeOf(context)?.model;
+    final model = NotifierProvider.watch<MessagesWidgetModel>(context);
     final chatName = model?.configuration.title ?? 'DELETED';
     final chatKey = model?.configuration.chatKey;
 
@@ -105,7 +106,7 @@ class _MessagesListWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final messagesCount =
-        MessagesWidgetModelProvider.noticeOf(context)?.model.messages.length ??
+        NotifierProvider.watch<MessagesWidgetModel>(context)?.messages.length ??
             0;
 
     return Flexible(
@@ -130,7 +131,7 @@ class _MessageBubbleWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final model = MessagesWidgetModelProvider.readOnly(context)!.model;
+    final model = NotifierProvider.read<MessagesWidgetModel>(context)!;
     final message = model.messages[indexInList];
     final time = message.time.toIso8601String().split(RegExp(r'[T:]'));
     final timeString = '${time[1]}:${time[2]}';

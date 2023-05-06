@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 
 import 'package:vk_app/ui/widgets/chat_form/chat_form_widget_model.dart';
-import 'package:vk_app/theme/app_colors.dart';
+import 'package:vk_app/Library/Widgets/Inherited/provider.dart';
 import 'package:vk_app/theme/app_text_field.dart';
+import 'package:vk_app/theme/app_colors.dart';
 
 class ChatFormWidget extends StatefulWidget {
   const ChatFormWidget({super.key});
@@ -16,7 +17,7 @@ class _ChatFormWidgetState extends State<ChatFormWidget> {
 
   @override
   Widget build(BuildContext context) {
-    return ChatFormWidgetModelProvider(
+    return NotifierProvider(
       model: _model,
       child: const _ChatFormWidgetBody(),
     );
@@ -28,7 +29,7 @@ class _ChatFormWidgetBody extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final model = ChatFormWidgetModelProvider.noticeOf(context)?.model;
+    final model = NotifierProvider.watch<ChatFormWidgetModel>(context);
 
     InkWell doneActive = InkWell(
       onTap: () => model?.saveChat(context),
@@ -110,7 +111,7 @@ class _ChatNameWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final model = ChatFormWidgetModelProvider.noticeOf(context)?.model;
+    final model = NotifierProvider.watch<ChatFormWidgetModel>(context);
     final errorText = model?.errorText;
 
     return Column(

@@ -51,28 +51,3 @@ class PasswordWidgetModel extends ChangeNotifier {
     print('Забыли пароль?');
   }
 }
-
-class PasswordWidgetModelProvider extends InheritedNotifier {
-  final PasswordWidgetModel model;
-
-  const PasswordWidgetModelProvider({
-    super.key,
-    required this.model,
-    required Widget child,
-  }) : super(
-          notifier: model,
-          child: child,
-        );
-
-  static PasswordWidgetModelProvider? noticeOf(BuildContext context) {
-    return context
-        .dependOnInheritedWidgetOfExactType<PasswordWidgetModelProvider>();
-  }
-
-  static PasswordWidgetModelProvider? readOnly(BuildContext context) {
-    final widget = context
-        .getElementForInheritedWidgetOfExactType<PasswordWidgetModelProvider>()
-        ?.widget;
-    return widget is PasswordWidgetModelProvider ? widget : null;
-  }
-}

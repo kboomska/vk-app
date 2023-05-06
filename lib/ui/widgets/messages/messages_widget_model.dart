@@ -45,28 +45,3 @@ class MessagesWidgetModel extends ChangeNotifier {
     super.dispose();
   }
 }
-
-class MessagesWidgetModelProvider extends InheritedNotifier {
-  final MessagesWidgetModel model;
-
-  const MessagesWidgetModelProvider({
-    super.key,
-    required this.model,
-    required Widget child,
-  }) : super(
-          notifier: model,
-          child: child,
-        );
-
-  static MessagesWidgetModelProvider? noticeOf(BuildContext context) {
-    return context
-        .dependOnInheritedWidgetOfExactType<MessagesWidgetModelProvider>();
-  }
-
-  static MessagesWidgetModelProvider? readOnly(BuildContext context) {
-    final widget = context
-        .getElementForInheritedWidgetOfExactType<MessagesWidgetModelProvider>()
-        ?.widget;
-    return widget is MessagesWidgetModelProvider ? widget : null;
-  }
-}

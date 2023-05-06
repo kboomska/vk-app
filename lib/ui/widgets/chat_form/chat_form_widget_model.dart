@@ -38,33 +38,3 @@ class ChatFormWidgetModel extends ChangeNotifier {
     Navigator.of(context).pop();
   }
 }
-
-class ChatFormWidgetModelProvider extends InheritedNotifier {
-  final ChatFormWidgetModel model;
-
-  const ChatFormWidgetModelProvider({
-    super.key,
-    required this.model,
-    required Widget child,
-  }) : super(
-          notifier: model,
-          child: child,
-        );
-
-  static ChatFormWidgetModelProvider? noticeOf(BuildContext context) {
-    return context
-        .dependOnInheritedWidgetOfExactType<ChatFormWidgetModelProvider>();
-  }
-
-  static ChatFormWidgetModelProvider? readOnly(BuildContext context) {
-    final widget = context
-        .getElementForInheritedWidgetOfExactType<ChatFormWidgetModelProvider>()
-        ?.widget;
-    return widget is ChatFormWidgetModelProvider ? widget : null;
-  }
-
-  @override
-  bool updateShouldNotify(ChatFormWidgetModelProvider oldWidget) {
-    return false;
-  }
-}

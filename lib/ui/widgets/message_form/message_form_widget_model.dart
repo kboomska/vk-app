@@ -35,34 +35,3 @@ class MessageFormWidgetModel extends ChangeNotifier {
     Navigator.of(context).pop();
   }
 }
-
-class MessageFormWidgetModelProvider extends InheritedNotifier {
-  final MessageFormWidgetModel model;
-
-  const MessageFormWidgetModelProvider({
-    super.key,
-    required this.model,
-    required Widget child,
-  }) : super(
-          notifier: model,
-          child: child,
-        );
-
-  static MessageFormWidgetModelProvider? noticeOf(BuildContext context) {
-    return context
-        .dependOnInheritedWidgetOfExactType<MessageFormWidgetModelProvider>();
-  }
-
-  static MessageFormWidgetModelProvider? readOnly(BuildContext context) {
-    final widget = context
-        .getElementForInheritedWidgetOfExactType<
-            MessageFormWidgetModelProvider>()
-        ?.widget;
-    return widget is MessageFormWidgetModelProvider ? widget : null;
-  }
-
-  @override
-  bool updateShouldNotify(MessageFormWidgetModelProvider oldWidget) {
-    return false;
-  }
-}

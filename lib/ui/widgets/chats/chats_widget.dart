@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 
 import 'package:vk_app/ui/widgets/chats/chats_widget_model.dart';
+import 'package:vk_app/Library/Widgets/Inherited/provider.dart';
 import 'package:vk_app/resources/resources.dart';
 import 'package:vk_app/theme/app_colors.dart';
 
@@ -18,7 +19,7 @@ class _ChatsWidgetState extends State<ChatsWidget> {
 
   @override
   Widget build(BuildContext context) {
-    return ChatsWidgetModelProvider(
+    return NotifierProvider(
       model: _model,
       child: const _ChatsWidgetBody(),
     );
@@ -86,9 +87,8 @@ class _ChatsActionsWidget extends StatelessWidget {
         InkWell(
           splashColor: Colors.transparent,
           highlightColor: Colors.transparent,
-          onTap: () => ChatsWidgetModelProvider.readOnly(context)
-              ?.model
-              .showForm(context),
+          onTap: () => NotifierProvider.read<ChatsWidgetModel>(context)
+              ?.showForm(context),
           child: const Icon(
             Icons.create,
             color: AppColors.chatActionIcon,
@@ -108,7 +108,7 @@ class _ChatListWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final chatsCount =
-        ChatsWidgetModelProvider.noticeOf(context)?.model.chats.length ?? 0;
+        NotifierProvider.watch<ChatsWidgetModel>(context)?.chats.length ?? 0;
 
     return ListView.builder(
       itemCount: chatsCount,
@@ -128,7 +128,7 @@ class _ChatsListRowWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final model = ChatsWidgetModelProvider.readOnly(context)!.model;
+    final model = NotifierProvider.read<ChatsWidgetModel>(context)!;
     final chat = model.chats[indexInList];
 
     return Slidable(

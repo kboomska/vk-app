@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'package:vk_app/ui/widgets/message_form/message_form_widget_model.dart';
+import 'package:vk_app/Library/Widgets/Inherited/provider.dart';
 import 'package:vk_app/theme/app_text_field.dart';
 import 'package:vk_app/theme/app_colors.dart';
 
@@ -24,7 +25,7 @@ class _MessageFormWidgetState extends State<MessageFormWidget> {
 
   @override
   Widget build(BuildContext context) {
-    return MessageFormWidgetModelProvider(
+    return NotifierProvider(
       model: _model,
       child: const _MessageFormWidgetBody(),
     );
@@ -45,7 +46,7 @@ class _MessageFormWidgetBodyState extends State<_MessageFormWidgetBody> {
 
   @override
   Widget build(BuildContext context) {
-    final model = MessageFormWidgetModelProvider.noticeOf(context)?.model;
+    final model = NotifierProvider.watch<MessageFormWidgetModel>(context);
 
     return Padding(
       padding: const EdgeInsets.symmetric(

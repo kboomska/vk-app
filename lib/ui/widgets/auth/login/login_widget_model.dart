@@ -78,28 +78,3 @@ class LoginWidgetModel extends ChangeNotifier {
     print('Зарегистрироваться');
   }
 }
-
-class LoginWidgetModelProvider extends InheritedNotifier {
-  final LoginWidgetModel model;
-
-  const LoginWidgetModelProvider({
-    super.key,
-    required this.model,
-    required Widget child,
-  }) : super(
-          notifier: model,
-          child: child,
-        );
-
-  static LoginWidgetModelProvider? noticeOf(BuildContext context) {
-    return context
-        .dependOnInheritedWidgetOfExactType<LoginWidgetModelProvider>();
-  }
-
-  static LoginWidgetModelProvider? readOnly(BuildContext context) {
-    final widget = context
-        .getElementForInheritedWidgetOfExactType<LoginWidgetModelProvider>()
-        ?.widget;
-    return widget is LoginWidgetModelProvider ? widget : null;
-  }
-}
