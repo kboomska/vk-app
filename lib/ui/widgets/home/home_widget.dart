@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import 'package:vk_app/ui/widgets/posts/posts_widget_model.dart';
+import 'package:vk_app/Library/Widgets/Inherited/provider.dart';
 import 'package:vk_app/ui/widgets/posts/posts_widget.dart';
 import 'package:vk_app/ui/widgets/chats/chats_widget.dart';
 import 'package:vk_app/theme/app_colors.dart';
@@ -12,6 +14,7 @@ class HomeWidget extends StatefulWidget {
 }
 
 class _HomeWidgetState extends State<HomeWidget> {
+  final postsWidgetModel = PostsWidgetModel();
   int _selectedTab = 0;
 
   static const List<String> _appBarOptions = [
@@ -25,6 +28,12 @@ class _HomeWidgetState extends State<HomeWidget> {
     setState(() {
       _selectedTab = index;
     });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    postsWidgetModel.loadNewsFeeds();
   }
 
   @override
@@ -57,7 +66,10 @@ class _HomeWidgetState extends State<HomeWidget> {
       body: IndexedStack(
         index: _selectedTab,
         children: [
-          const PostsWidget(),
+          NotifierProvider(
+            model: PostsWidgetModel(),
+            child: const PostsWidget(),
+          ),
           const ChatsWidget(),
           Center(child: Text(_appBarOptions[2])),
         ],

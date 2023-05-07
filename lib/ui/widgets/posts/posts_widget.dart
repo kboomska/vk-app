@@ -1,19 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:vk_app/Library/Widgets/Inherited/provider.dart';
 
 import 'package:vk_app/domain/data_provider/access_data_provider.dart';
 import 'package:vk_app/ui/widgets/posts/posts_widget_model.dart';
+import 'package:vk_app/Library/Widgets/Inherited/provider.dart';
 import 'package:vk_app/theme/app_colors.dart';
 
-class PostsWidget extends StatefulWidget {
+class PostsWidget extends StatelessWidget {
   const PostsWidget({super.key});
-
-  @override
-  State<PostsWidget> createState() => _PostsWidgetState();
-}
-
-class _PostsWidgetState extends State<PostsWidget> {
-  final model = PostsWidgetModel();
 
   @override
   Widget build(BuildContext context) {
@@ -38,12 +31,9 @@ class _PostsWidgetState extends State<PostsWidget> {
           ),
         ],
       ),
-      body: NotifierProvider(
-        model: model,
-        child: const ColoredBox(
-          color: AppColors.mainBackgroundColor,
-          child: _PostListWidget(),
-        ),
+      body: const ColoredBox(
+        color: AppColors.mainBackgroundColor,
+        child: _PostListWidget(),
       ),
     );
   }
@@ -58,7 +48,8 @@ class _PostListWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return ListView.separated(
       itemCount:
-          NotifierProvider.watch<PostsWidgetModel>(context)?.posts.length ?? 0,
+          NotifierProvider.watch<PostsWidgetModel>(context)?.newsfeeds.length ??
+              0,
       separatorBuilder: (context, index) => const SizedBox(
         height: 8,
       ),
@@ -79,7 +70,8 @@ class _PostCardWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final post = NotifierProvider.read<PostsWidgetModel>(context)!.posts[index];
+    final post =
+        NotifierProvider.read<PostsWidgetModel>(context)!.newsfeeds[index];
 
     return DecoratedBox(
       decoration: BoxDecoration(
@@ -229,7 +221,8 @@ class _PostCardFooterWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final post = NotifierProvider.read<PostsWidgetModel>(context)!.posts[index];
+    final post =
+        NotifierProvider.read<PostsWidgetModel>(context)!.newsfeeds[index];
     return Padding(
       padding: const EdgeInsets.only(left: 8, right: 8, bottom: 8),
       child: Row(
@@ -298,7 +291,8 @@ class _PostCardLikeButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final post = NotifierProvider.read<PostsWidgetModel>(context)!.posts[index];
+    final post =
+        NotifierProvider.read<PostsWidgetModel>(context)!.newsfeeds[index];
     final int reactions = post.reactions;
     final bool isLiked = post.isLiked;
 

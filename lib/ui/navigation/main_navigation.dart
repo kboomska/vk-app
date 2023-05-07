@@ -7,6 +7,7 @@ import 'package:vk_app/ui/widgets/messages/messages_widget.dart';
 import 'package:vk_app/ui/widgets/auth/login/login_widget.dart';
 import 'package:vk_app/Library/Widgets/Inherited/provider.dart';
 import 'package:vk_app/ui/widgets/auth/web_page/web_page.dart';
+import 'package:vk_app/ui/widgets/home/home_widget_model.dart';
 import 'package:vk_app/ui/widgets/home/home_widget.dart';
 
 abstract class MainNavigationRouteNames {
@@ -27,7 +28,10 @@ class MainNavigation {
           model: LoginWidgetModel(),
           child: const LoginWidget(),
         ),
-    MainNavigationRouteNames.home: (context) => const HomeWidget(),
+    MainNavigationRouteNames.home: (context) => NotifierProvider(
+          model: HomeWidgetModel(),
+          child: const HomeWidget(),
+        ),
     MainNavigationRouteNames.chatForm: (context) => const ChatFormWidget(),
   };
 
