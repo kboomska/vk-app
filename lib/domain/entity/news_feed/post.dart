@@ -23,7 +23,7 @@ class Post {
   final String postType;
   final Object reposts;
   final String text;
-  final Object views;
+  final Object? views;
 
   Post({
     required this.type,

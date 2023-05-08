@@ -46,10 +46,11 @@ class _PostListWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final postsCount =
+        NotifierProvider.watch<NewsFeedWidgetModel>(context)?.posts.length ?? 0;
+
     return ListView.separated(
-      itemCount:
-          NotifierProvider.watch<NewsFeedWidgetModel>(context)?.posts.length ??
-              0,
+      itemCount: postsCount,
       separatorBuilder: (context, index) => const SizedBox(
         height: 8,
       ),
@@ -70,8 +71,8 @@ class _PostCardWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final post =
-        NotifierProvider.read<NewsFeedWidgetModel>(context)!.posts[index];
+    final model = NotifierProvider.read<NewsFeedWidgetModel>(context);
+    final post = model!.posts[index];
 
     return DecoratedBox(
       decoration: BoxDecoration(
@@ -79,12 +80,13 @@ class _PostCardWidget extends StatelessWidget {
         borderRadius: BorderRadius.circular(16.0),
       ),
       child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // _PostCardHeaderWidget(
-          //   avatar: post.avatar,
-          //   author: post.author,
-          //   date: post.date,
-          // ),
+          _PostCardHeaderWidget(
+            // avatar: post.avatar,
+            // author: post.author,
+            date: model.stringDate(post.date),
+          ),
           _PostCardTextWidget(text: post.text),
           // _PostCardMediaWidget(media: post.media),
           _PostCardFooterWidget(
@@ -97,14 +99,14 @@ class _PostCardWidget extends StatelessWidget {
 }
 
 class _PostCardHeaderWidget extends StatelessWidget {
-  final String avatar;
-  final String author;
+  // final String avatar;
+  // final String author;
   final String date;
 
   const _PostCardHeaderWidget({
     super.key,
-    required this.avatar,
-    required this.author,
+    // required this.avatar,
+    // required this.author,
     required this.date,
   });
 
@@ -121,23 +123,23 @@ class _PostCardHeaderWidget extends StatelessWidget {
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(20),
             ),
-            child: Image.asset(
-              avatar,
-            ),
+            // child: Image.asset(
+            //   avatar,
+            // ),
           ),
           const SizedBox(
             width: 8,
           ),
           Column(
             children: [
-              Text(
-                author,
-                style: const TextStyle(
-                  fontSize: 15,
-                  fontWeight: FontWeight.w700,
-                  color: AppColors.postAuthor,
-                ),
-              ),
+              // Text(
+              //   author,
+              //   style: const TextStyle(
+              //     fontSize: 15,
+              //     fontWeight: FontWeight.w700,
+              //     color: AppColors.postAuthor,
+              //   ),
+              // ),
               const SizedBox(
                 height: 3,
               ),

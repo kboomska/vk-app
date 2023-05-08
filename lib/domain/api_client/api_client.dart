@@ -21,6 +21,11 @@ class ApiClient {
   static const _responseType = 'token';
   static const _versionApi = '5.131';
   static const _language = 'ru';
+  // static final _startTime = DateTime.now()
+  //     .subtract(const Duration(days: 1))
+  //     .toUtc()
+  //     .millisecondsSinceEpoch
+  //     .toString();
 
   Uri _makeUri(String host, String path, [Map<String, dynamic>? parameters]) {
     final uri = Uri.parse('$host$path');
@@ -85,6 +90,7 @@ class ApiClient {
 
     final parameters = <String, dynamic>{
       'filters': 'post',
+      // 'start_time': _startTime,
       'access_token': accessToken,
       'v': _versionApi,
     };

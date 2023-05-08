@@ -14,7 +14,7 @@ class HomeWidget extends StatefulWidget {
 }
 
 class _HomeWidgetState extends State<HomeWidget> {
-  final postsWidgetModel = NewsFeedWidgetModel();
+  final newsFeedWidgetModel = NewsFeedWidgetModel();
   int _selectedTab = 0;
 
   static const List<String> _appBarOptions = [
@@ -31,9 +31,9 @@ class _HomeWidgetState extends State<HomeWidget> {
   }
 
   @override
-  void initState() {
-    super.initState();
-    postsWidgetModel.loadNewsFeeds();
+  void didChangeDependencies() async {
+    super.didChangeDependencies();
+    await newsFeedWidgetModel.loadNewsFeeds();
   }
 
   @override
@@ -67,7 +67,7 @@ class _HomeWidgetState extends State<HomeWidget> {
         index: _selectedTab,
         children: [
           NotifierProvider(
-            model: NewsFeedWidgetModel(),
+            model: newsFeedWidgetModel,
             child: const NewsFeedWidget(),
           ),
           const ChatsWidget(),

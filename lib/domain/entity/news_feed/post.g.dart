@@ -28,7 +28,7 @@ Post _$PostFromJson(Map<String, dynamic> json) => Post(
       postType: json['post_type'] as String,
       reposts: json['reposts'] as Object,
       text: json['text'] as String,
-      views: json['views'] as Object,
+      views: json['views'],
     );
 
 Map<String, dynamic> _$PostToJson(Post instance) => <String, dynamic>{
