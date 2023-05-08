@@ -18,6 +18,22 @@ class NewsFeedWidgetModel extends ChangeNotifier {
     return '$day в $time';
   }
 
+  String stringViews(int viewsCount) {
+    String stringCount;
+    if (viewsCount < 1000) {
+      stringCount = viewsCount.toString();
+    } else if (viewsCount < 10000) {
+      stringCount = '${(viewsCount / 1000).toStringAsFixed(1)}K';
+    } else if (viewsCount < 1000000) {
+      stringCount = '${viewsCount % 1000}K';
+    } else if (viewsCount < 10000000) {
+      stringCount = '${(viewsCount / 1000000).toStringAsFixed(1)}M';
+    } else {
+      stringCount = '${viewsCount % 1000000}M';
+    }
+    return stringCount;
+  }
+
   Future<void> loadNewsFeeds() async {
     final newsFeedsResponse = await _apiClient.getNewsFeed();
     _posts.addAll(newsFeedsResponse.posts);

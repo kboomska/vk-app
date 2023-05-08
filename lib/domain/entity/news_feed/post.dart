@@ -1,5 +1,10 @@
 import 'package:json_annotation/json_annotation.dart';
 
+import 'package:vk_app/domain/entity/news_feed/comments.dart';
+import 'package:vk_app/domain/entity/news_feed/reposts.dart';
+import 'package:vk_app/domain/entity/news_feed/likes.dart';
+import 'package:vk_app/domain/entity/news_feed/views.dart';
+
 part 'post.g.dart';
 
 @JsonSerializable(fieldRename: FieldRename.snake, explicitToJson: true)
@@ -9,21 +14,21 @@ class Post {
   final int date;
   final double shortTextRate;
   final Object donut;
-  final Object comments;
-  final int markedAsAds;
+  final Comments comments;
+  final int? markedAsAds;
   final bool? canSetCategory;
   final bool? canDoubtCategory;
   final List<Object> attachments;
   final int id;
   final bool isFavorite;
-  final Object likes;
+  final Likes likes;
   final int ownerId;
   final int postId;
   final Object postSource;
   final String postType;
-  final Object reposts;
+  final Reposts reposts;
   final String text;
-  final Object? views;
+  final Views? views;
 
   Post({
     required this.type,

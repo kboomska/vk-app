@@ -223,8 +223,9 @@ class _PostCardFooterWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final post =
-        NotifierProvider.read<NewsFeedWidgetModel>(context)!.posts[index];
+    final model = NotifierProvider.read<NewsFeedWidgetModel>(context);
+    final post = model!.posts[index];
+
     return Padding(
       padding: const EdgeInsets.only(left: 8, right: 8, bottom: 8),
       child: Row(
@@ -235,48 +236,49 @@ class _PostCardFooterWidget extends StatelessWidget {
           const SizedBox(
             width: 8,
           ),
-          // _PostCardBottomButton(
-          //   buttonCounter: post.replies,
-          //   buttonIcon: const Icon(
-          //     Icons.messenger_outline_outlined,
-          //     color: AppColors.postBottomButtons,
-          //     size: 24,
-          //   ),
-          // ),
+          _PostCardBottomButton(
+            buttonCounter: post.comments.count,
+            buttonIcon: const Icon(
+              Icons.messenger_outline_outlined,
+              color: AppColors.postBottomButtons,
+              size: 24,
+            ),
+          ),
           const SizedBox(
             width: 8,
           ),
-          // _PostCardBottomButton(
-          //   buttonCounter: post.share,
-          //   buttonIcon: const Icon(
-          //     Icons.reply_rounded,
-          //     color: AppColors.postBottomButtons,
-          //     size: 24,
-          //     textDirection: TextDirection.rtl,
-          //   ),
-          // ),
+          _PostCardBottomButton(
+            buttonCounter: post.reposts.count,
+            buttonIcon: const Icon(
+              Icons.reply_rounded,
+              color: AppColors.postBottomButtons,
+              size: 24,
+              textDirection: TextDirection.rtl,
+            ),
+          ),
           const Spacer(),
-          Row(
-            children: [
-              const Icon(
-                Icons.visibility,
-                color: AppColors.postBottomViews,
-                size: 16,
-                textDirection: TextDirection.rtl,
-              ),
-              const SizedBox(
-                width: 8,
-              ),
-              // Text(
-              //   post.views,
-              //   style: const TextStyle(
-              //     fontSize: 14,
-              //     fontWeight: FontWeight.w400,
-              //     color: AppColors.postBottomViews,
-              //   ),
-              // ),
-            ],
-          )
+          if (post.views != null)
+            Row(
+              children: [
+                const Icon(
+                  Icons.visibility,
+                  color: AppColors.postBottomViews,
+                  size: 16,
+                  textDirection: TextDirection.rtl,
+                ),
+                const SizedBox(
+                  width: 8,
+                ),
+                Text(
+                  model.stringViews(post.views!.count),
+                  style: const TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w400,
+                    color: AppColors.postBottomViews,
+                  ),
+                ),
+              ],
+            )
         ],
       ),
     );
@@ -295,10 +297,8 @@ class _PostCardLikeButton extends StatelessWidget {
   Widget build(BuildContext context) {
     final post =
         NotifierProvider.read<NewsFeedWidgetModel>(context)!.posts[index];
-    // final int reactions = post.reactions;
-    // final bool isLiked = post.isLiked;
-    final int reactions = 99;
-    final bool isLiked = true;
+    final int likesCount = post.likes.count;
+    final bool isLiked = post.likes.userLikes == 1;
 
     return Material(
       borderRadius: BorderRadius.circular(16),
@@ -329,7 +329,7 @@ class _PostCardLikeButton extends StatelessWidget {
                   width: 4,
                 ),
                 Text(
-                  '$reactions',
+                  '$likesCount',
                   style: TextStyle(
                     fontSize: 13,
                     fontWeight: FontWeight.w500,
