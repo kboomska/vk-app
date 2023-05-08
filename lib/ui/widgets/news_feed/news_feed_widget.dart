@@ -73,6 +73,8 @@ class _PostCardWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     final model = NotifierProvider.read<NewsFeedWidgetModel>(context);
     final post = model!.posts[index];
+    // final media = post.attachments;
+    // final photo = media[0].type == 'photo' ? media[0].photo : null;
 
     return DecoratedBox(
       decoration: BoxDecoration(
@@ -88,7 +90,7 @@ class _PostCardWidget extends StatelessWidget {
             date: model.stringDate(post.date),
           ),
           _PostCardTextWidget(text: post.text),
-          // _PostCardMediaWidget(media: post.media),
+          // _PostCardMediaWidget(media: photo?.sizes.last.url),
           _PostCardFooterWidget(
             index: index,
           ),
@@ -206,7 +208,7 @@ class _PostCardMediaWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.only(top: 12, bottom: 12),
-      child: Image.asset(
+      child: Image.network(
         media,
       ),
     );

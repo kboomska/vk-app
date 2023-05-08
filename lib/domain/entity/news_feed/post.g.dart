@@ -17,7 +17,7 @@ Post _$PostFromJson(Map<String, dynamic> json) => Post(
       canSetCategory: json['can_set_category'] as bool?,
       canDoubtCategory: json['can_doubt_category'] as bool?,
       attachments: (json['attachments'] as List<dynamic>)
-          .map((e) => e as Object)
+          .map((e) => Attachment.fromJson(e as Map<String, dynamic>))
           .toList(),
       id: json['id'] as int,
       isFavorite: json['is_favorite'] as bool,
@@ -43,7 +43,7 @@ Map<String, dynamic> _$PostToJson(Post instance) => <String, dynamic>{
       'marked_as_ads': instance.markedAsAds,
       'can_set_category': instance.canSetCategory,
       'can_doubt_category': instance.canDoubtCategory,
-      'attachments': instance.attachments,
+      'attachments': instance.attachments.map((e) => e.toJson()).toList(),
       'id': instance.id,
       'is_favorite': instance.isFavorite,
       'likes': instance.likes.toJson(),

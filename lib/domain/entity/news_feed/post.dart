@@ -1,5 +1,6 @@
 import 'package:json_annotation/json_annotation.dart';
 
+import 'package:vk_app/domain/entity/news_feed/attachment.dart';
 import 'package:vk_app/domain/entity/news_feed/comments.dart';
 import 'package:vk_app/domain/entity/news_feed/reposts.dart';
 import 'package:vk_app/domain/entity/news_feed/likes.dart';
@@ -18,7 +19,7 @@ class Post {
   final int? markedAsAds;
   final bool? canSetCategory;
   final bool? canDoubtCategory;
-  final List<Object> attachments;
+  final List<Attachment> attachments;
   final int id;
   final bool isFavorite;
   final Likes likes;
