@@ -3,7 +3,9 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 
+import 'package:vk_app/domain/entity/news_feed/news_feed_response.dart';
 import 'package:vk_app/domain/data_provider/access_data_provider.dart';
+import 'package:vk_app/domain/entity/news_feed/json_response.dart';
 import 'package:vk_app/ui/widgets/auth/web_page/web_page.dart';
 import 'package:vk_app/ui/navigation/main_navigation.dart';
 
@@ -72,10 +74,13 @@ class ApiClient {
     return response;
   }
 
-  Future<dynamic> getNewsFeed() async {
+  Future<NewsFeedResponse> getNewsFeed() async {
     final accessToken = await _accessDataProvider.getAccessToken();
     parser(dynamic json) {
-      return json;
+      final jsonMap = json as Map<String, dynamic>;
+      final jsonResponse = JsonResponse.fromJson(jsonMap);
+
+      return jsonResponse.response;
     }
 
     final parameters = <String, dynamic>{

@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 
+import 'package:vk_app/ui/widgets/news_feed/news_feed_widget_model.dart';
 import 'package:vk_app/domain/data_provider/access_data_provider.dart';
-import 'package:vk_app/ui/widgets/posts/posts_widget_model.dart';
 import 'package:vk_app/Library/Widgets/Inherited/provider.dart';
 import 'package:vk_app/theme/app_colors.dart';
 
-class PostsWidget extends StatelessWidget {
-  const PostsWidget({super.key});
+class NewsFeedWidget extends StatelessWidget {
+  const NewsFeedWidget({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -48,7 +48,7 @@ class _PostListWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return ListView.separated(
       itemCount:
-          NotifierProvider.watch<PostsWidgetModel>(context)?.newsfeeds.length ??
+          NotifierProvider.watch<NewsFeedWidgetModel>(context)?.posts.length ??
               0,
       separatorBuilder: (context, index) => const SizedBox(
         height: 8,
@@ -71,7 +71,7 @@ class _PostCardWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final post =
-        NotifierProvider.read<PostsWidgetModel>(context)!.newsfeeds[index];
+        NotifierProvider.read<NewsFeedWidgetModel>(context)!.posts[index];
 
     return DecoratedBox(
       decoration: BoxDecoration(
@@ -80,13 +80,13 @@ class _PostCardWidget extends StatelessWidget {
       ),
       child: Column(
         children: [
-          _PostCardHeaderWidget(
-            avatar: post.avatar,
-            author: post.author,
-            date: post.date,
-          ),
+          // _PostCardHeaderWidget(
+          //   avatar: post.avatar,
+          //   author: post.author,
+          //   date: post.date,
+          // ),
           _PostCardTextWidget(text: post.text),
-          _PostCardMediaWidget(media: post.media),
+          // _PostCardMediaWidget(media: post.media),
           _PostCardFooterWidget(
             index: index,
           ),
@@ -222,7 +222,7 @@ class _PostCardFooterWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final post =
-        NotifierProvider.read<PostsWidgetModel>(context)!.newsfeeds[index];
+        NotifierProvider.read<NewsFeedWidgetModel>(context)!.posts[index];
     return Padding(
       padding: const EdgeInsets.only(left: 8, right: 8, bottom: 8),
       child: Row(
@@ -233,26 +233,26 @@ class _PostCardFooterWidget extends StatelessWidget {
           const SizedBox(
             width: 8,
           ),
-          _PostCardBottomButton(
-            buttonCounter: post.replies,
-            buttonIcon: const Icon(
-              Icons.messenger_outline_outlined,
-              color: AppColors.postBottomButtons,
-              size: 24,
-            ),
-          ),
+          // _PostCardBottomButton(
+          //   buttonCounter: post.replies,
+          //   buttonIcon: const Icon(
+          //     Icons.messenger_outline_outlined,
+          //     color: AppColors.postBottomButtons,
+          //     size: 24,
+          //   ),
+          // ),
           const SizedBox(
             width: 8,
           ),
-          _PostCardBottomButton(
-            buttonCounter: post.share,
-            buttonIcon: const Icon(
-              Icons.reply_rounded,
-              color: AppColors.postBottomButtons,
-              size: 24,
-              textDirection: TextDirection.rtl,
-            ),
-          ),
+          // _PostCardBottomButton(
+          //   buttonCounter: post.share,
+          //   buttonIcon: const Icon(
+          //     Icons.reply_rounded,
+          //     color: AppColors.postBottomButtons,
+          //     size: 24,
+          //     textDirection: TextDirection.rtl,
+          //   ),
+          // ),
           const Spacer(),
           Row(
             children: [
@@ -265,14 +265,14 @@ class _PostCardFooterWidget extends StatelessWidget {
               const SizedBox(
                 width: 8,
               ),
-              Text(
-                post.views,
-                style: const TextStyle(
-                  fontSize: 14,
-                  fontWeight: FontWeight.w400,
-                  color: AppColors.postBottomViews,
-                ),
-              ),
+              // Text(
+              //   post.views,
+              //   style: const TextStyle(
+              //     fontSize: 14,
+              //     fontWeight: FontWeight.w400,
+              //     color: AppColors.postBottomViews,
+              //   ),
+              // ),
             ],
           )
         ],
@@ -292,14 +292,16 @@ class _PostCardLikeButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final post =
-        NotifierProvider.read<PostsWidgetModel>(context)!.newsfeeds[index];
-    final int reactions = post.reactions;
-    final bool isLiked = post.isLiked;
+        NotifierProvider.read<NewsFeedWidgetModel>(context)!.posts[index];
+    // final int reactions = post.reactions;
+    // final bool isLiked = post.isLiked;
+    final int reactions = 99;
+    final bool isLiked = true;
 
     return Material(
       borderRadius: BorderRadius.circular(16),
       child: InkWell(
-        onTap: () => NotifierProvider.watch<PostsWidgetModel>(context)
+        onTap: () => NotifierProvider.watch<NewsFeedWidgetModel>(context)
             ?.onTapLikeButton(index: index),
         borderRadius: BorderRadius.circular(16),
         child: Container(
