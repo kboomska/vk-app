@@ -86,9 +86,10 @@ class _PostCardWidget extends StatelessWidget {
           _PostCardHeaderWidget(
             // avatar: post.avatar,
             // author: post.author,
+            sourceId: post.sourceId,
             date: model.stringDate(post.date),
           ),
-          if (post.text.isNotEmpty) _PostCardTextWidget(text: post.text),
+          _PostCardTextWidget(text: post.text),
           if (post.attachments.isNotEmpty)
             _PostCardMediaWidget(
               attachment: post.attachments.first,
@@ -105,17 +106,22 @@ class _PostCardWidget extends StatelessWidget {
 class _PostCardHeaderWidget extends StatelessWidget {
   // final String avatar;
   // final String author;
+  final int sourceId;
   final String date;
 
   const _PostCardHeaderWidget({
     super.key,
     // required this.avatar,
     // required this.author,
+    required this.sourceId,
     required this.date,
   });
 
   @override
   Widget build(BuildContext context) {
+    final model = NotifierProvider.read<NewsFeedWidgetModel>(context);
+    final sourceData = model?.getPostHeaderData(sourceId);
+
     return Padding(
       padding: const EdgeInsets.only(top: 12, left: 12, right: 12),
       child: Row(
@@ -127,23 +133,29 @@ class _PostCardHeaderWidget extends StatelessWidget {
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(20),
             ),
-            // child: Image.asset(
-            //   avatar,
-            // ),
+            child: sourceData != null && sourceData.isNotEmpty
+                ? Image.network(
+                    sourceData['photo'],
+                  )
+                : null,
           ),
           const SizedBox(
             width: 8,
           ),
           Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Text(
-              //   author,
-              //   style: const TextStyle(
-              //     fontSize: 15,
-              //     fontWeight: FontWeight.w700,
-              //     color: AppColors.postAuthor,
-              //   ),
-              // ),
+              Text(
+                sourceData != null && sourceData.isNotEmpty
+                    ? sourceData['name']
+                    : '',
+                style: const TextStyle(
+                  fontSize: 15,
+                  fontWeight: FontWeight.w700,
+                  color: AppColors.postAuthor,
+                ),
+                overflow: TextOverflow.ellipsis,
+              ),
               const SizedBox(
                 height: 3,
               ),
@@ -185,6 +197,7 @@ class _PostCardTextWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    if (text.isEmpty) return const SizedBox.shrink();
     return Padding(
       padding: const EdgeInsets.only(top: 8, left: 12, right: 12),
       child: Text(
