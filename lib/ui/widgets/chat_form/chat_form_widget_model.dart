@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'package:vk_app/domain/data_provider/box_manager.dart';
-import 'package:vk_app/domain/entity/chat.dart';
+import 'package:vk_app/domain/entity/messenger/chat.dart';
 
 class ChatFormWidgetModel extends ChangeNotifier {
   String _chatName = '';

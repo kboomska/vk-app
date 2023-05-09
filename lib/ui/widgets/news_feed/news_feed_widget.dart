@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import 'package:vk_app/ui/widgets/news_feed/news_feed_widget_model.dart';
 import 'package:vk_app/domain/data_provider/access_data_provider.dart';
+import 'package:vk_app/domain/entity/news_feed/posts/attachment.dart';
 import 'package:vk_app/Library/Widgets/Inherited/provider.dart';
 import 'package:vk_app/theme/app_colors.dart';
 
@@ -73,8 +74,6 @@ class _PostCardWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     final model = NotifierProvider.read<NewsFeedWidgetModel>(context);
     final post = model!.posts[index];
-    // final media = post.attachments;
-    // final photo = media[0].type == 'photo' ? media[0].photo : null;
 
     return DecoratedBox(
       decoration: BoxDecoration(
@@ -89,8 +88,11 @@ class _PostCardWidget extends StatelessWidget {
             // author: post.author,
             date: model.stringDate(post.date),
           ),
-          _PostCardTextWidget(text: post.text),
-          // _PostCardMediaWidget(media: photo?.sizes.last.url),
+          if (post.text.isNotEmpty) _PostCardTextWidget(text: post.text),
+          if (post.attachments.isNotEmpty)
+            _PostCardMediaWidget(
+              attachment: post.attachments.first,
+            ),
           _PostCardFooterWidget(
             index: index,
           ),
@@ -200,17 +202,30 @@ class _PostCardTextWidget extends StatelessWidget {
 }
 
 class _PostCardMediaWidget extends StatelessWidget {
-  final String media;
+  final Attachment attachment;
 
-  const _PostCardMediaWidget({super.key, required this.media});
+  const _PostCardMediaWidget({super.key, required this.attachment});
 
   @override
   Widget build(BuildContext context) {
+    Widget setAttachment(Attachment attachment) {
+      if (attachment.type == 'photo') {
+        return Center(
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(maxHeight: 510),
+            child: Image.network(
+              attachment.photo!.sizes.last.url,
+            ),
+          ),
+        );
+      } else {
+        return const SizedBox.shrink();
+      }
+    }
+
     return Padding(
       padding: const EdgeInsets.only(top: 12, bottom: 12),
-      child: Image.network(
-        media,
-      ),
+      child: setAttachment(attachment),
     );
   }
 }

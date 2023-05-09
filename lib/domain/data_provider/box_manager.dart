@@ -1,7 +1,7 @@
 import 'package:hive_flutter/hive_flutter.dart';
 
-import 'package:vk_app/domain/entity/message.dart';
-import 'package:vk_app/domain/entity/chat.dart';
+import 'package:vk_app/domain/entity/messenger/message.dart';
+import 'package:vk_app/domain/entity/messenger/chat.dart';
 
 class BoxManager {
   static final BoxManager instance = BoxManager._();

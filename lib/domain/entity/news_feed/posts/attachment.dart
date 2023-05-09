@@ -1,6 +1,6 @@
 import 'package:json_annotation/json_annotation.dart';
 
-import 'package:vk_app/domain/entity/attachments/photo/photo.dart';
+import 'package:vk_app/domain/entity/news_feed/posts/attachments/photo/photo.dart';
 
 part 'attachment.g.dart';
 

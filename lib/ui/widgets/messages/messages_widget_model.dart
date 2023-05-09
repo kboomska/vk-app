@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 
 import 'package:vk_app/ui/widgets/messages/messages_widget.dart';
 import 'package:vk_app/domain/data_provider/box_manager.dart';
-import 'package:vk_app/domain/entity/message.dart';
+import 'package:vk_app/domain/entity/messenger/message.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 
 class MessagesWidgetModel extends ChangeNotifier {

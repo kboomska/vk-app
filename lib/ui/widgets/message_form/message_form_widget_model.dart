@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'package:vk_app/domain/data_provider/box_manager.dart';
-import 'package:vk_app/domain/entity/message.dart';
+import 'package:vk_app/domain/entity/messenger/message.dart';
 
 class MessageFormWidgetModel extends ChangeNotifier {
   final int chatKey;

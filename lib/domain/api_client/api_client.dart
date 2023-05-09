@@ -3,9 +3,9 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 
-import 'package:vk_app/domain/entity/news_feed/news_feed_response.dart';
+import 'package:vk_app/domain/entity/news_feed/posts/news_feed_response.dart';
+import 'package:vk_app/domain/entity/news_feed/posts/json_response.dart';
 import 'package:vk_app/domain/data_provider/access_data_provider.dart';
-import 'package:vk_app/domain/entity/news_feed/json_response.dart';
 import 'package:vk_app/ui/widgets/auth/web_page/web_page.dart';
 import 'package:vk_app/ui/navigation/main_navigation.dart';
 

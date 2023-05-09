@@ -6,7 +6,7 @@ import 'package:hive_flutter/hive_flutter.dart';
 import 'package:vk_app/ui/widgets/messages/messages_widget.dart';
 import 'package:vk_app/domain/data_provider/box_manager.dart';
 import 'package:vk_app/ui/navigation/main_navigation.dart';
-import 'package:vk_app/domain/entity/chat.dart';
+import 'package:vk_app/domain/entity/messenger/chat.dart';
 
 class ChatsWidgetModel extends ChangeNotifier {
   late final Future<Box<Chat>> _box;

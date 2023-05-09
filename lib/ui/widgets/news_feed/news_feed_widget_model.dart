@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 
 import 'package:intl/intl.dart';
 
+import 'package:vk_app/domain/entity/news_feed/posts/post.dart';
 import 'package:vk_app/domain/api_client/api_client.dart';
-import 'package:vk_app/domain/entity/news_feed/post.dart';
 
 class NewsFeedWidgetModel extends ChangeNotifier {
   final _apiClient = ApiClient();

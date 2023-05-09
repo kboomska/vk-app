@@ -1,10 +1,10 @@
 import 'package:json_annotation/json_annotation.dart';
 
-import 'package:vk_app/domain/entity/news_feed/attachment.dart';
-import 'package:vk_app/domain/entity/news_feed/comments.dart';
-import 'package:vk_app/domain/entity/news_feed/reposts.dart';
-import 'package:vk_app/domain/entity/news_feed/likes.dart';
-import 'package:vk_app/domain/entity/news_feed/views.dart';
+import 'package:vk_app/domain/entity/news_feed/posts/attachment.dart';
+import 'package:vk_app/domain/entity/news_feed/posts/comments.dart';
+import 'package:vk_app/domain/entity/news_feed/posts/reposts.dart';
+import 'package:vk_app/domain/entity/news_feed/posts/likes.dart';
+import 'package:vk_app/domain/entity/news_feed/posts/views.dart';
 
 part 'post.g.dart';
 
