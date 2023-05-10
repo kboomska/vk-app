@@ -8,8 +8,8 @@ part of 'online_info.dart';
 
 OnlineInfo _$OnlineInfoFromJson(Map<String, dynamic> json) => OnlineInfo(
       visible: json['visible'] as bool,
-      isOnline: json['is_online'] as bool,
-      isMobile: json['is_mobile'] as bool,
+      isOnline: json['is_online'] as bool?,
+      isMobile: json['is_mobile'] as bool?,
     );
 
 Map<String, dynamic> _$OnlineInfoToJson(OnlineInfo instance) =>

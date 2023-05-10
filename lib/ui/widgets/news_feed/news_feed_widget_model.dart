@@ -12,6 +12,8 @@ class NewsFeedWidgetModel extends ChangeNotifier {
   final _posts = <Post>[];
   final _groups = <Group>[];
   final _profiles = <Profile>[];
+  bool _isLoadingInProgress = false;
+  String? _nextFrom;
 
   List<Post> get posts => List.unmodifiable(_posts);
 
@@ -53,11 +55,27 @@ class NewsFeedWidgetModel extends ChangeNotifier {
   }
 
   Future<void> loadNewsFeeds() async {
-    final newsFeedsResponse = await _apiClient.getNewsFeed();
-    _posts.addAll(newsFeedsResponse.posts);
-    notifyListeners();
-    _groups.addAll(newsFeedsResponse.groups);
-    _profiles.addAll(newsFeedsResponse.profiles);
+    if (_isLoadingInProgress) return;
+    _isLoadingInProgress = true;
+
+    try {
+      final newsFeedsResponse = await _apiClient.getNewsFeed(_nextFrom);
+      _posts.addAll(newsFeedsResponse.posts);
+
+      _groups.addAll(newsFeedsResponse.groups);
+      _profiles.addAll(newsFeedsResponse.profiles);
+      _nextFrom = newsFeedsResponse.nextFrom;
+
+      _isLoadingInProgress = false;
+      notifyListeners();
+    } catch (e) {
+      _isLoadingInProgress = false;
+    }
+  }
+
+  void fetchPostsAtIndex(int index) {
+    if (index < _posts.length - 1) return;
+    loadNewsFeeds();
   }
 
   void onTapLikeButton({required int index}) {

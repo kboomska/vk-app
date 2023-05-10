@@ -11,7 +11,7 @@ Photo _$PhotoFromJson(Map<String, dynamic> json) => Photo(
       date: json['date'] as int,
       id: json['id'] as int,
       ownerId: json['owner_id'] as int,
-      accessKey: json['access_key'] as String,
+      accessKey: json['access_key'] as String?,
       postId: json['post_id'] as int?,
       sizes: (json['sizes'] as List<dynamic>)
           .map((e) => Size.fromJson(e as Map<String, dynamic>))

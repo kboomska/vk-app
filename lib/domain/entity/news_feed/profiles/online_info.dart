@@ -5,8 +5,8 @@ part 'online_info.g.dart';
 @JsonSerializable(fieldRename: FieldRename.snake)
 class OnlineInfo {
   final bool visible;
-  final bool isOnline;
-  final bool isMobile;
+  final bool? isOnline;
+  final bool? isMobile;
 
   OnlineInfo({
     required this.visible,

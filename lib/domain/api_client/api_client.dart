@@ -21,11 +21,6 @@ class ApiClient {
   static const _responseType = 'token';
   static const _versionApi = '5.131';
   static const _language = 'ru';
-  // static final _startTime = DateTime.now()
-  //     .subtract(const Duration(days: 1))
-  //     .toUtc()
-  //     .millisecondsSinceEpoch
-  //     .toString();
 
   Uri _makeUri(String host, String path, [Map<String, dynamic>? parameters]) {
     final uri = Uri.parse('$host$path');
@@ -79,7 +74,7 @@ class ApiClient {
     return response;
   }
 
-  Future<NewsFeedResponse> getNewsFeed() async {
+  Future<NewsFeedResponse> getNewsFeed(String? startFrom) async {
     final accessToken = await _accessDataProvider.getAccessToken();
     parser(dynamic json) {
       final jsonMap = json as Map<String, dynamic>;
@@ -90,7 +85,7 @@ class ApiClient {
 
     final parameters = <String, dynamic>{
       'filters': 'post',
-      // 'start_time': _startTime,
+      'start_from': startFrom,
       'access_token': accessToken,
       'v': _versionApi,
     };

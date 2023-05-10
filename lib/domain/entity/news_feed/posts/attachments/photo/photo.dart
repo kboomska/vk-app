@@ -10,7 +10,7 @@ class Photo {
   final int date;
   final int id;
   final int ownerId;
-  final String accessKey;
+  final String? accessKey;
   final int? postId;
   final List<Size> sizes;
   final String text;

@@ -73,6 +73,7 @@ class _PostCardWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final model = NotifierProvider.read<NewsFeedWidgetModel>(context);
+    model?.fetchPostsAtIndex(index);
     final post = model!.posts[index];
 
     return DecoratedBox(
