@@ -14,14 +14,44 @@ class NewsFeedWidgetModel extends ChangeNotifier {
   final _profiles = <Profile>[];
   bool _isLoadingInProgress = false;
   String? _nextFrom;
+  late DateFormat _dateFormat;
+  late DateFormat _timeFormat;
+  String _locale = '';
 
   List<Post> get posts => List.unmodifiable(_posts);
 
-  String stringDate(int date) {
-    final dateTime = DateTime.fromMillisecondsSinceEpoch(date * 1000);
-    final day = DateFormat.MMMMd().format(dateTime);
-    final time = DateFormat.Hm().format(dateTime);
+  String stringDate(DateTime date) {
+    late String day;
+    final now = DateTime.now();
+    final today = DateTime(now.year, now.month, now.day);
+    final yesterday = DateTime(now.year, now.month, now.day - 1);
+
+    final aDate = DateTime(date.year, date.month, date.day);
+    if (aDate == today) {
+      day = 'сегодня';
+    } else if (aDate == yesterday) {
+      day = 'вчера';
+    } else {
+      day = _dateFormat.format(date);
+    }
+    final time = _timeFormat.format(date);
     return '$day в $time';
+  }
+
+  Future<void> setupLocale(BuildContext context) async {
+    final locale = Localizations.localeOf(context).toLanguageTag();
+
+    if (_locale == locale) return;
+    _locale = locale;
+    _dateFormat = DateFormat.MMMMd(_locale);
+    _timeFormat = DateFormat.Hm(_locale);
+
+    await _resetNewsFeed();
+  }
+
+  Future<void> _resetNewsFeed() async {
+    _posts.clear();
+    await _loadNewsFeeds();
   }
 
   String stringViews(int viewsCount) {
@@ -54,7 +84,7 @@ class NewsFeedWidgetModel extends ChangeNotifier {
     return sourceData;
   }
 
-  Future<void> loadNewsFeeds() async {
+  Future<void> _loadNewsFeeds() async {
     if (_isLoadingInProgress) return;
     _isLoadingInProgress = true;
 
@@ -75,7 +105,7 @@ class NewsFeedWidgetModel extends ChangeNotifier {
 
   void fetchPostsAtIndex(int index) {
     if (index < _posts.length - 1) return;
-    loadNewsFeeds();
+    _loadNewsFeeds();
   }
 
   void onTapLikeButton({required int index}) {

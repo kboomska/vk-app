@@ -33,7 +33,7 @@ class _HomeWidgetState extends State<HomeWidget> {
   @override
   void didChangeDependencies() async {
     super.didChangeDependencies();
-    await newsFeedWidgetModel.loadNewsFeeds();
+    await newsFeedWidgetModel.setupLocale(context);
   }
 
   @override

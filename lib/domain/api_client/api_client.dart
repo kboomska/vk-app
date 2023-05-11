@@ -13,6 +13,7 @@ class ApiClient {
   final _client = HttpClient();
   final _accessDataProvider = AccessDataProvider();
 
+  static const _clientId = String.fromEnvironment('CLIENT_ID');
   static const _authHost = 'https://oauth.vk.com';
   static const _host = 'https://api.vk.com/method';
   static const _redirectUri = 'https://oauth.vk.com/blank.html';
@@ -42,11 +43,11 @@ class ApiClient {
     return authResponse;
   }
 
-  Future<String?> auth(BuildContext context, String clientId) async {
+  Future<String?> auth(BuildContext context) async {
     String? response;
 
     final parameters = <String, dynamic>{
-      'client_id': clientId,
+      'client_id': _clientId,
       'redirect_uri': _redirectUri,
       'display': _display,
       'scope': _scope,

@@ -28,13 +28,12 @@ class LoginWidgetModel extends ChangeNotifier {
   }
 
   Future<void> auth(BuildContext context) async {
-    final clientId = loginTextController.text;
     String? response;
     String? accessToken;
 
     _errorMessage = null;
     try {
-      response = await _client.auth(context, clientId);
+      response = await _client.auth(context);
     } catch (error) {
       _errorMessage = 'Неизвестная ошибка';
     }

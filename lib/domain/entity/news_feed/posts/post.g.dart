@@ -9,7 +9,7 @@ part of 'post.dart';
 Post _$PostFromJson(Map<String, dynamic> json) => Post(
       type: json['type'] as String,
       sourceId: json['source_id'] as int,
-      date: json['date'] as int,
+      date: parseDateFromUnixTimeStamp(json['date'] as int),
       shortTextRate: (json['short_text_rate'] as num).toDouble(),
       donut: json['donut'] as Object,
       comments: Comments.fromJson(json['comments'] as Map<String, dynamic>),
@@ -36,7 +36,7 @@ Post _$PostFromJson(Map<String, dynamic> json) => Post(
 Map<String, dynamic> _$PostToJson(Post instance) => <String, dynamic>{
       'type': instance.type,
       'source_id': instance.sourceId,
-      'date': instance.date,
+      'date': instance.date.toIso8601String(),
       'short_text_rate': instance.shortTextRate,
       'donut': instance.donut,
       'comments': instance.comments.toJson(),

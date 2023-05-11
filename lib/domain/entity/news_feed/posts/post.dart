@@ -5,6 +5,7 @@ import 'package:vk_app/domain/entity/news_feed/posts/comments.dart';
 import 'package:vk_app/domain/entity/news_feed/posts/reposts.dart';
 import 'package:vk_app/domain/entity/news_feed/posts/likes.dart';
 import 'package:vk_app/domain/entity/news_feed/posts/views.dart';
+import 'package:vk_app/domain/entity/entity_date_parser.dart';
 
 part 'post.g.dart';
 
@@ -12,7 +13,8 @@ part 'post.g.dart';
 class Post {
   final String type;
   final int sourceId;
-  final int date;
+  @JsonKey(fromJson: parseDateFromUnixTimeStamp)
+  final DateTime date;
   final double shortTextRate;
   final Object donut;
   final Comments comments;
