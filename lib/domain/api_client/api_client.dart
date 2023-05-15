@@ -75,12 +75,31 @@ class ApiClient {
     return response;
   }
 
+  Future<T> _post<T>(
+    String path,
+    T Function(dynamic json) parser,
+    Map<String, dynamic> urlParameters,
+  ) async {
+    final url = _makeUri(
+      _host,
+      path,
+      urlParameters,
+    );
+
+    final request = await _client.postUrl(url);
+    request.headers.contentType = ContentType.json;
+    final response = await request.close();
+    final json = await response.jsonDecode();
+    final result = parser(json);
+    return result;
+  }
+
   Future<NewsFeedResponse> getNewsFeed(String? startFrom) async {
     final accessToken = await _accessDataProvider.getAccessToken();
+
     parser(dynamic json) {
       final jsonMap = json as Map<String, dynamic>;
       final jsonResponse = JsonResponse.fromJson(jsonMap);
-
       return jsonResponse.response;
     }
 
@@ -91,18 +110,12 @@ class ApiClient {
       'v': _versionApi,
     };
 
-    final url = _makeUri(
-      _host,
+    final result = _post(
       '/newsfeed.get',
+      parser,
       parameters,
     );
 
-    final request = await _client.postUrl(url);
-    request.headers.contentType = ContentType.json;
-    // request.write(jsonEncode(object));
-    final response = await request.close();
-    final json = await response.jsonDecode();
-    final result = parser(json);
     return result;
   }
 }
