@@ -256,6 +256,8 @@ class _PostCardFooterWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     final model = NotifierProvider.read<NewsFeedWidgetModel>(context);
     final post = model!.posts[index];
+    final String reposts = model.stringCounter(post.reposts.count);
+    final String comments = model.stringCounter(post.comments.count);
 
     return Padding(
       padding: const EdgeInsets.only(left: 8, right: 8, bottom: 8),
@@ -268,7 +270,7 @@ class _PostCardFooterWidget extends StatelessWidget {
             width: 8,
           ),
           _PostCardBottomButton(
-            buttonCounter: post.comments.count,
+            buttonCounter: comments,
             buttonIcon: const Icon(
               Icons.messenger_outline_outlined,
               color: AppColors.postBottomButtons,
@@ -279,7 +281,7 @@ class _PostCardFooterWidget extends StatelessWidget {
             width: 8,
           ),
           _PostCardBottomButton(
-            buttonCounter: post.reposts.count,
+            buttonCounter: reposts,
             buttonIcon: const Icon(
               Icons.reply_rounded,
               color: AppColors.postBottomButtons,
@@ -301,7 +303,7 @@ class _PostCardFooterWidget extends StatelessWidget {
                   width: 8,
                 ),
                 Text(
-                  model.stringViews(post.views!.count),
+                  model.stringCounter(post.views!.count),
                   style: const TextStyle(
                     fontSize: 14,
                     fontWeight: FontWeight.w400,
@@ -326,9 +328,9 @@ class _PostCardLikeButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final post =
-        NotifierProvider.read<NewsFeedWidgetModel>(context)!.posts[index];
-    final int likesCount = post.likes.count;
+    final model = NotifierProvider.read<NewsFeedWidgetModel>(context);
+    final post = model!.posts[index];
+    final String likesCount = model.stringCounter(post.likes.count);
     final bool isLiked = post.likes.userLikes == 1;
 
     return Material(
@@ -360,7 +362,7 @@ class _PostCardLikeButton extends StatelessWidget {
                   width: 4,
                 ),
                 Text(
-                  '$likesCount',
+                  likesCount,
                   style: TextStyle(
                     fontSize: 13,
                     fontWeight: FontWeight.w500,
@@ -379,7 +381,7 @@ class _PostCardLikeButton extends StatelessWidget {
 }
 
 class _PostCardBottomButton extends StatelessWidget {
-  final int buttonCounter;
+  final String buttonCounter;
   final Icon buttonIcon;
 
   const _PostCardBottomButton({
@@ -405,7 +407,7 @@ class _PostCardBottomButton extends StatelessWidget {
               width: 4,
             ),
             Text(
-              '$buttonCounter',
+              buttonCounter,
               style: const TextStyle(
                 fontSize: 13,
                 fontWeight: FontWeight.w500,

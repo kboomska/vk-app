@@ -54,20 +54,20 @@ class NewsFeedWidgetModel extends ChangeNotifier {
     await _loadNewsFeeds();
   }
 
-  String stringViews(int viewsCount) {
-    String stringCount;
-    if (viewsCount < 1000) {
-      stringCount = viewsCount.toString();
-    } else if (viewsCount < 10000) {
-      stringCount = '${(viewsCount / 1000).toStringAsFixed(1)}K';
-    } else if (viewsCount < 1000000) {
-      stringCount = '${viewsCount % 1000}K';
-    } else if (viewsCount < 10000000) {
-      stringCount = '${(viewsCount / 1000000).toStringAsFixed(1)}M';
+  String stringCounter(int counter) {
+    String result;
+    if (counter < 1000) {
+      result = counter.toString();
+    } else if (counter < 10000) {
+      result = '${(counter / 1000).toStringAsFixed(1)}K';
+    } else if (counter < 1000000) {
+      result = '${counter % 1000}K';
+    } else if (counter < 10000000) {
+      result = '${(counter / 1000000).toStringAsFixed(1)}M';
     } else {
-      stringCount = '${viewsCount % 1000000}M';
+      result = '${counter % 1000000}M';
     }
-    return stringCount;
+    return result;
   }
 
   Map<String, dynamic> getPostHeaderData(int sourceId) {
