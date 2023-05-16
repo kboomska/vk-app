@@ -98,6 +98,21 @@ class NewsFeedWidgetModel extends ChangeNotifier {
 
       _isLoadingInProgress = false;
       notifyListeners();
+    } on ApiClientException catch (e) {
+      switch (e.type) {
+        case ApiClientExceptionType.network:
+          print('Сервер не доступен. Проверьте подключение к интернету.');
+          break;
+        case ApiClientExceptionType.accessToken:
+          print('Неверный access_token');
+          break;
+        case ApiClientExceptionType.captcha:
+          print('Требуется ввод кода с картинки (Captcha).');
+          break;
+        case ApiClientExceptionType.other:
+          print('Произошла ошибка. Попробуйте ещё раз.');
+          break;
+      }
     } catch (e) {
       _isLoadingInProgress = false;
     }

@@ -9,6 +9,14 @@ import 'package:vk_app/domain/data_provider/access_data_provider.dart';
 import 'package:vk_app/ui/widgets/auth/web_page/web_page.dart';
 import 'package:vk_app/ui/navigation/main_navigation.dart';
 
+enum ApiClientExceptionType { network, accessToken, captcha, other }
+
+class ApiClientException implements Exception {
+  ApiClientExceptionType type;
+
+  ApiClientException(this.type);
+}
+
 class ApiClient {
   final _client = HttpClient();
   final _accessDataProvider = AccessDataProvider();
@@ -86,12 +94,21 @@ class ApiClient {
       urlParameters,
     );
 
-    final request = await _client.postUrl(url);
-    request.headers.contentType = ContentType.json;
-    final response = await request.close();
-    final json = await response.jsonDecode();
-    final result = parser(json);
-    return result;
+    try {
+      final request = await _client.postUrl(url);
+      request.headers.contentType = ContentType.json;
+      final response = await request.close();
+      final json = await response.jsonDecode();
+      _validateResponse(response, json);
+      final result = parser(json);
+      return result;
+    } on SocketException {
+      throw ApiClientException(ApiClientExceptionType.network);
+    } on ApiClientException {
+      rethrow;
+    } catch (_) {
+      throw ApiClientException(ApiClientExceptionType.other);
+    }
   }
 
   Future<NewsFeedResponse> getNewsFeed(String? startFrom) async {
@@ -117,6 +134,22 @@ class ApiClient {
     );
 
     return result;
+  }
+
+  void _validateResponse(HttpClientResponse response, dynamic json) {
+    if (response.statusCode == 200) {
+      final jsonMap = json as Map<String, dynamic>;
+      if (jsonMap.containsKey('error')) {
+        final errorCode = jsonMap['error']['error_code'];
+        if (errorCode == 5) {
+          throw ApiClientException(ApiClientExceptionType.accessToken);
+        } else if (errorCode == 14) {
+          throw ApiClientException(ApiClientExceptionType.captcha);
+        } else {
+          throw ApiClientException(ApiClientExceptionType.other);
+        }
+      }
+    }
   }
 }
 
