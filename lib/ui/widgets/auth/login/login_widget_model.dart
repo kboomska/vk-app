@@ -28,31 +28,40 @@ class LoginWidgetModel extends ChangeNotifier {
   }
 
   Future<void> auth(BuildContext context) async {
-    String? response;
     String? accessToken;
 
     _errorMessage = null;
     try {
-      response = await _client.auth(context);
-    } catch (error) {
-      _errorMessage = 'Неизвестная ошибка';
+      accessToken = await _client.auth(context);
+    } on ApiClientException catch (e) {
+      switch (e.type) {
+        case ApiClientExceptionType.network:
+          _errorMessage =
+              'Сервер не доступен. Проверьте подключение к интернету.';
+          break;
+        case ApiClientExceptionType.authCancel:
+          _errorMessage = 'Авторизация отменена пользователем.';
+          break;
+        case ApiClientExceptionType.other:
+          _errorMessage = 'Произошла ошибка. Попробуйте ещё раз.';
+          break;
+        default:
+          break;
+      }
     }
 
-    print('Auth response: $response');
+    print('Auth token: $accessToken');
 
     if (_errorMessage != null) {
       notifyListeners();
       return;
     }
 
-    if (response == null) {
+    if (accessToken == null) {
       _errorMessage = 'Ошибка авторизации, повторите попытку';
       notifyListeners();
       return;
     }
-
-    accessToken = _client.getResponseFragments(response)['access_token'];
-    print('Auth token: $accessToken');
 
     await _accessDataProvider.setAccessToken(accessToken);
     Navigator.of(context).pushReplacementNamed(MainNavigationRouteNames.home);
@@ -62,15 +71,15 @@ class LoginWidgetModel extends ChangeNotifier {
     final login = _login;
 
     if (login == 'admin@mail.ru') {
+      _errorMessage = null;
       Navigator.of(context)
           .pushNamed(MainNavigationRouteNames.password, arguments: login);
     } else if (login.isEmpty) {
       _errorMessage = 'Не указана почта';
-      notifyListeners();
     } else {
       _errorMessage = 'Неверный адрес почты';
-      notifyListeners();
     }
+    notifyListeners();
   }
 
   void goToSignInScreen() {

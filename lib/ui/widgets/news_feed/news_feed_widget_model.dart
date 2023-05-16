@@ -112,6 +112,8 @@ class NewsFeedWidgetModel extends ChangeNotifier {
         case ApiClientExceptionType.other:
           print('Произошла ошибка. Попробуйте ещё раз.');
           break;
+        default:
+          break;
       }
     } catch (e) {
       _isLoadingInProgress = false;

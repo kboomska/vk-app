@@ -9,7 +9,7 @@ import 'package:vk_app/domain/data_provider/access_data_provider.dart';
 import 'package:vk_app/ui/widgets/auth/web_page/web_page.dart';
 import 'package:vk_app/ui/navigation/main_navigation.dart';
 
-enum ApiClientExceptionType { network, accessToken, captcha, other }
+enum ApiClientExceptionType { network, authCancel, accessToken, captcha, other }
 
 class ApiClientException implements Exception {
   ApiClientExceptionType type;
@@ -40,19 +40,8 @@ class ApiClient {
     }
   }
 
-  Map<String, dynamic> getResponseFragments(String response) {
-    Map<String, dynamic> authResponse = {};
-    final responseUri = Uri.parse(response);
-    final uriFragments = responseUri.fragment.split('&');
-    for (var element in uriFragments) {
-      authResponse[element.split('=')[0]] = element.split('=')[1];
-    }
-
-    return authResponse;
-  }
-
-  Future<String?> auth(BuildContext context) async {
-    String? response;
+  Future<String> auth(BuildContext context) async {
+    late String accessToken;
 
     final parameters = <String, dynamic>{
       'client_id': _clientId,
@@ -76,11 +65,19 @@ class ApiClient {
       _redirectUri,
     );
 
-    await Navigator.of(context)
-        .pushNamed(MainNavigationRouteNames.oauth, arguments: configuration)
-        .then((value) => response = value as String?);
+    try {
+      await Navigator.of(context)
+          .pushNamed(MainNavigationRouteNames.oauth, arguments: configuration)
+          .then((value) => accessToken = _checkAuthResponse(value));
 
-    return response;
+      return accessToken;
+    } on SocketException {
+      throw ApiClientException(ApiClientExceptionType.network);
+    } on ApiClientException {
+      rethrow;
+    } catch (_) {
+      throw ApiClientException(ApiClientExceptionType.other);
+    }
   }
 
   Future<T> _post<T>(
@@ -149,6 +146,25 @@ class ApiClient {
           throw ApiClientException(ApiClientExceptionType.other);
         }
       }
+    }
+  }
+
+  String _checkAuthResponse(Object? response) {
+    final Map<String, dynamic> authResponse = {};
+
+    if (response != null) {
+      final responseString = response as String;
+      final responseUri = Uri.parse(responseString);
+      final uriFragments = responseUri.fragment.split('&');
+      for (var element in uriFragments) {
+        authResponse[element.split('=')[0]] = element.split('=')[1];
+      }
+    }
+
+    if (authResponse.isEmpty || authResponse.containsKey('error')) {
+      throw ApiClientException(ApiClientExceptionType.authCancel);
+    } else {
+      return authResponse['access_token'];
     }
   }
 }
