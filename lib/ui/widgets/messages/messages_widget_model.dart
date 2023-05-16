@@ -1,5 +1,4 @@
 import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart';
 
 import 'package:vk_app/ui/widgets/messages/messages_widget.dart';
 import 'package:vk_app/domain/data_provider/box_manager.dart';

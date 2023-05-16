@@ -2,12 +2,14 @@ import 'package:flutter/material.dart';
 
 import 'package:intl/intl.dart';
 
+import 'package:vk_app/domain/data_provider/access_data_provider.dart';
 import 'package:vk_app/domain/entity/news_feed/profiles/profile.dart';
 import 'package:vk_app/domain/entity/news_feed/groups/group.dart';
 import 'package:vk_app/domain/entity/news_feed/posts/post.dart';
 import 'package:vk_app/domain/api_client/api_client.dart';
 
 class NewsFeedWidgetModel extends ChangeNotifier {
+  final _accessDataProvider = AccessDataProvider();
   final _apiClient = ApiClient();
   final _posts = <Post>[];
   final _groups = <Group>[];
@@ -17,6 +19,8 @@ class NewsFeedWidgetModel extends ChangeNotifier {
   late DateFormat _dateFormat;
   late DateFormat _timeFormat;
   String _locale = '';
+
+  Future<void>? Function()? onAccessTokenExpired;
 
   List<Post> get posts => List.unmodifiable(_posts);
 
@@ -85,11 +89,13 @@ class NewsFeedWidgetModel extends ChangeNotifier {
   }
 
   Future<void> _loadNewsFeeds() async {
+    final accessToken = await _accessDataProvider.getAccessToken();
     if (_isLoadingInProgress) return;
     _isLoadingInProgress = true;
 
     try {
-      final newsFeedsResponse = await _apiClient.getNewsFeed(_nextFrom);
+      final newsFeedsResponse =
+          await _apiClient.getNewsFeed(accessToken, _nextFrom);
       _posts.addAll(newsFeedsResponse.posts);
 
       _groups.addAll(newsFeedsResponse.groups);
@@ -104,7 +110,7 @@ class NewsFeedWidgetModel extends ChangeNotifier {
           print('Сервер не доступен. Проверьте подключение к интернету.');
           break;
         case ApiClientExceptionType.accessToken:
-          print('Неверный access_token');
+          await onAccessTokenExpired?.call();
           break;
         case ApiClientExceptionType.captcha:
           print('Требуется ввод кода с картинки (Captcha).');

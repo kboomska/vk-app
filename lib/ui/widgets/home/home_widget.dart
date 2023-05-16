@@ -4,6 +4,7 @@ import 'package:vk_app/ui/widgets/news_feed/news_feed_widget_model.dart';
 import 'package:vk_app/ui/widgets/news_feed/news_feed_widget.dart';
 import 'package:vk_app/Library/Widgets/Inherited/provider.dart';
 import 'package:vk_app/ui/widgets/chats/chats_widget.dart';
+import 'package:vk_app/ui/widgets/app/vk_app_model.dart';
 import 'package:vk_app/theme/app_colors.dart';
 
 class HomeWidget extends StatefulWidget {
@@ -28,6 +29,14 @@ class _HomeWidgetState extends State<HomeWidget> {
     setState(() {
       _selectedTab = index;
     });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    final vkAppModel = Provider.read<VKAppModel>(context);
+    newsFeedWidgetModel.onAccessTokenExpired =
+        () => vkAppModel?.resetSession(context);
   }
 
   @override

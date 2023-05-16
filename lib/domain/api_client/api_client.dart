@@ -5,7 +5,6 @@ import 'package:flutter/material.dart';
 
 import 'package:vk_app/domain/entity/news_feed/posts/news_feed_response.dart';
 import 'package:vk_app/domain/entity/news_feed/posts/json_response.dart';
-import 'package:vk_app/domain/data_provider/access_data_provider.dart';
 import 'package:vk_app/ui/widgets/auth/web_page/web_page.dart';
 import 'package:vk_app/ui/navigation/main_navigation.dart';
 
@@ -19,7 +18,6 @@ class ApiClientException implements Exception {
 
 class ApiClient {
   final _client = HttpClient();
-  final _accessDataProvider = AccessDataProvider();
 
   static const _clientId = String.fromEnvironment('CLIENT_ID');
   static const _authHost = 'https://oauth.vk.com';
@@ -108,9 +106,8 @@ class ApiClient {
     }
   }
 
-  Future<NewsFeedResponse> getNewsFeed(String? startFrom) async {
-    final accessToken = await _accessDataProvider.getAccessToken();
-
+  Future<NewsFeedResponse> getNewsFeed(
+      String? accessToken, String? startFrom) async {
     parser(dynamic json) {
       final jsonMap = json as Map<String, dynamic>;
       final jsonResponse = JsonResponse.fromJson(jsonMap);
