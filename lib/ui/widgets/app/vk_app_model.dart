@@ -18,7 +18,7 @@ class VKAppModel {
     await _accessDataProvider.setAccessToken(null);
     await Navigator.of(context).pushNamedAndRemoveUntil(
       MainNavigationRouteNames.login,
-      (route) => false,
+      (_) => false,
     );
   }
 }

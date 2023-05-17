@@ -105,22 +105,7 @@ class NewsFeedWidgetModel extends ChangeNotifier {
       _isLoadingInProgress = false;
       notifyListeners();
     } on ApiClientException catch (e) {
-      switch (e.type) {
-        case ApiClientExceptionType.network:
-          print('Сервер не доступен. Проверьте подключение к интернету.');
-          break;
-        case ApiClientExceptionType.accessToken:
-          await onAccessTokenExpired?.call();
-          break;
-        case ApiClientExceptionType.captcha:
-          print('Требуется ввод кода с картинки (Captcha).');
-          break;
-        case ApiClientExceptionType.other:
-          print('Произошла ошибка. Попробуйте ещё раз.');
-          break;
-        default:
-          break;
-      }
+      _handleApiClientException(e);
     } catch (e) {
       _isLoadingInProgress = false;
     }
@@ -139,5 +124,25 @@ class NewsFeedWidgetModel extends ChangeNotifier {
     //   _posts[index].reactions -= 1;
     // }
     // notifyListeners();
+  }
+
+  void _handleApiClientException(ApiClientException exception) {
+    switch (exception.type) {
+      case ApiClientExceptionType.network:
+        print('Сервер не доступен. Проверьте подключение к интернету.');
+        break;
+      case ApiClientExceptionType.accessToken:
+        onAccessTokenExpired?.call();
+        break;
+      case ApiClientExceptionType.captcha:
+        print('Требуется ввод кода с картинки (Captcha).');
+        break;
+      case ApiClientExceptionType.other:
+        print('Произошла ошибка. Попробуйте ещё раз.');
+        break;
+      default:
+        print(exception);
+        break;
+    }
   }
 }

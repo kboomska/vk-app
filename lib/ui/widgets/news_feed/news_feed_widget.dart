@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 
 import 'package:vk_app/ui/widgets/news_feed/news_feed_widget_model.dart';
-import 'package:vk_app/domain/data_provider/access_data_provider.dart';
 import 'package:vk_app/domain/entity/news_feed/posts/attachment.dart';
 import 'package:vk_app/Library/Widgets/Inherited/provider.dart';
 import 'package:vk_app/theme/app_colors.dart';
@@ -11,6 +10,8 @@ class NewsFeedWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final model = NotifierProvider.read<NewsFeedWidgetModel>(context);
+
     return Scaffold(
       appBar: AppBar(
         backgroundColor: AppColors.appBackgroundColor,
@@ -27,7 +28,7 @@ class NewsFeedWidget extends StatelessWidget {
         ),
         actions: [
           IconButton(
-            onPressed: () => AccessDataProvider().setAccessToken(null),
+            onPressed: () => model?.onAccessTokenExpired?.call(),
             icon: const Icon(Icons.logout),
           ),
         ],

@@ -40,7 +40,9 @@ class PasswordWidgetModel extends ChangeNotifier {
 
     if (password == 'admin') {
       Navigator.of(context).pushNamedAndRemoveUntil(
-          MainNavigationRouteNames.home, ModalRoute.withName('/'));
+        MainNavigationRouteNames.home,
+        (_) => false,
+      );
     } else {
       _errorText = 'Неверный пароль, проверьте правильность введенных данных';
       notifyListeners();
