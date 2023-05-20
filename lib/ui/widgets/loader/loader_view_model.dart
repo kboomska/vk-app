@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 
-import 'package:vk_app/domain/data_provider/access_data_provider.dart';
 import 'package:vk_app/ui/navigation/main_navigation.dart';
+import 'package:vk_app/domain/services/auth_service.dart';
 
 class LoaderViewModel {
-  final _accessDataProvider = AccessDataProvider();
+  final _authService = AuthService();
   BuildContext context;
 
   LoaderViewModel(this.context) {
@@ -16,8 +16,7 @@ class LoaderViewModel {
   }
 
   Future<void> checkAuth() async {
-    final accessToken = await _accessDataProvider.getAccessToken();
-    final isAuth = accessToken != null;
+    final isAuth = await _authService.isAuth();
 
     final nextScreen =
         isAuth ? MainNavigationRouteNames.home : MainNavigationRouteNames.login;
