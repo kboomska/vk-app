@@ -8,22 +8,22 @@ import 'package:vk_app/ui/widgets/auth/login/login_widget.dart';
 import 'package:vk_app/Library/Widgets/Inherited/provider.dart';
 import 'package:vk_app/ui/widgets/auth/web_page/web_page.dart';
 import 'package:vk_app/ui/widgets/home/home_widget_model.dart';
+import 'package:vk_app/ui/widgets/loader/loader_widget.dart';
 import 'package:vk_app/ui/widgets/home/home_widget.dart';
 
 abstract class MainNavigationRouteNames {
-  static const login = 'login';
-  static const password = 'login/password';
-  static const oauth = 'login/oauth';
-  static const home = '/';
-  static const chatForm = '/chatForm';
-  static const messages = '/messages';
+  static const loader = '/';
+  static const login = '/login';
+  static const password = '/login/password';
+  static const oauth = '/login/oauth';
+  static const home = '/home';
+  static const chatForm = '/home/chatForm';
+  static const messages = '/home/messages';
 }
 
 class MainNavigation {
-  String initialRoute(bool isAuth) =>
-      isAuth ? MainNavigationRouteNames.home : MainNavigationRouteNames.login;
-
   final routes = <String, Widget Function(BuildContext)>{
+    MainNavigationRouteNames.loader: (context) => LoaderWidget.create(),
     MainNavigationRouteNames.login: (context) => NotifierProvider(
           model: LoginWidgetModel(),
           child: const LoginWidget(),
