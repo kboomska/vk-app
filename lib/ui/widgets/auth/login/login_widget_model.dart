@@ -8,24 +8,8 @@ class LoginWidgetModel extends ChangeNotifier {
   final _client = ApiClient();
   final _accessDataProvider = AccessDataProvider();
 
-  // String _login = '';
-  String _login = 'admin@mail.ru'; // For testing only!
-  final loginTextController =
-      TextEditingController(text: 'admin@mail.ru'); // For testing only!
-
   String? _errorMessage;
-
-  bool get isLogin => _login.isNotEmpty;
   String? get errorMessage => _errorMessage;
-
-  set login(String value) {
-    _login = value;
-
-    if (_errorMessage != null) {
-      _errorMessage = null;
-    }
-    notifyListeners();
-  }
 
   Future<void> auth(BuildContext context) async {
     String? accessToken;
@@ -37,13 +21,13 @@ class LoginWidgetModel extends ChangeNotifier {
       switch (e.type) {
         case ApiClientExceptionType.network:
           _errorMessage =
-              'Сервер не доступен. Проверьте подключение к интернету.';
+              'Сервер не доступен. Проверьте подключение к интернету';
           break;
         case ApiClientExceptionType.authCancel:
-          _errorMessage = 'Авторизация отменена пользователем.';
+          _errorMessage = 'Авторизация отменена пользователем';
           break;
         case ApiClientExceptionType.other:
-          _errorMessage = 'Произошла ошибка. Попробуйте ещё раз.';
+          _errorMessage = 'Произошла ошибка. Попробуйте ещё раз';
           break;
         default:
           break;
@@ -64,25 +48,15 @@ class LoginWidgetModel extends ChangeNotifier {
     }
 
     await _accessDataProvider.setAccessToken(accessToken);
-    Navigator.of(context).pushReplacementNamed(MainNavigationRouteNames.home);
-  }
-
-  void goToPasswordScreen(BuildContext context) {
-    final login = _login;
-
-    if (login == 'admin@mail.ru') {
-      _errorMessage = null;
-      Navigator.of(context)
-          .pushNamed(MainNavigationRouteNames.password, arguments: login);
-    } else if (login.isEmpty) {
-      _errorMessage = 'Не указана почта';
-    } else {
-      _errorMessage = 'Неверный адрес почты';
+    if (context.mounted) {
+      Navigator.of(context).pushReplacementNamed(MainNavigationRouteNames.home);
     }
-    notifyListeners();
   }
 
-  void goToSignInScreen() {
-    print('Зарегистрироваться');
+  void loginWithApple() {
+    _errorMessage = null;
+    notifyListeners();
+
+    print('Войти через Apple');
   }
 }

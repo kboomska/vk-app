@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:vk_app/ui/widgets/auth/login/login_widget_model.dart';
 import 'package:vk_app/Library/Widgets/Inherited/provider.dart';
 import 'package:vk_app/theme/app_button_style.dart';
-import 'package:vk_app/theme/app_text_field.dart';
 import 'package:vk_app/theme/app_colors.dart';
 
 class LoginWidget extends StatefulWidget {
@@ -17,40 +16,52 @@ class _LoginWidgetState extends State<LoginWidget> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: AppColors.appBackgroundColor,
-        iconTheme: const IconThemeData(color: AppColors.iconBlue),
-        elevation: 0.0,
-      ),
-      resizeToAvoidBottomInset: false,
       backgroundColor: AppColors.appBackgroundColor,
-      body: Padding(
-        padding: const EdgeInsets.symmetric(
-          horizontal: 16,
-          vertical: 16,
-        ),
-        child: Column(
-          children: const [
-            _HeaderOfLoginWidget(),
-            SizedBox(height: 20),
-            _FormOfLoginWidget(),
-          ],
+      body: SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.symmetric(
+            horizontal: 16,
+            vertical: 16,
+          ),
+          child: Column(
+            children: const [
+              _LoginWidgetBody(),
+              SizedBox(height: 16),
+              _LoginWidgetFooter(),
+            ],
+          ),
         ),
       ),
     );
   }
 }
 
-class _HeaderOfLoginWidget extends StatelessWidget {
-  const _HeaderOfLoginWidget({super.key});
+class _LoginWidgetBody extends StatelessWidget {
+  const _LoginWidgetBody({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Expanded(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.end,
+        children: const [
+          _LoginWidgetLogo(),
+          SizedBox(height: 16),
+          _ErrorMessageWidget(),
+          _LoginButton(),
+        ],
+      ),
+    );
+  }
+}
+
+class _LoginWidgetLogo extends StatelessWidget {
+  const _LoginWidgetLogo({super.key});
 
   @override
   Widget build(BuildContext context) {
     return Column(
       children: [
-        const SizedBox(
-          height: 52,
-        ),
         SizedBox(
           height: 56,
           width: 56,
@@ -78,7 +89,7 @@ class _HeaderOfLoginWidget extends StatelessWidget {
           'Вход ВКонтакте',
           style: TextStyle(
             color: Colors.black,
-            fontSize: 20,
+            fontSize: 22,
             fontWeight: FontWeight.w500,
           ),
         ),
@@ -87,78 +98,24 @@ class _HeaderOfLoginWidget extends StatelessWidget {
   }
 }
 
-class _FormOfLoginWidget extends StatelessWidget {
-  const _FormOfLoginWidget({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Expanded(
-      child: Column(
-        children: const [
-          _LoginFormWidget(),
-          SizedBox(height: 20),
-          _LoginButton(),
-          Spacer(),
-          _SingInButton(),
-        ],
-      ),
-    );
-  }
-}
-
-class _LoginFormWidget extends StatelessWidget {
-  const _LoginFormWidget({super.key});
+class _ErrorMessageWidget extends StatelessWidget {
+  const _ErrorMessageWidget({super.key});
 
   @override
   Widget build(BuildContext context) {
     final model = NotifierProvider.watch<LoginWidgetModel>(context);
     final errorMessage = model?.errorMessage;
-    final loginTextController = model?.loginTextController;
 
-    InkWell suffixIcon = InkWell(
-      splashColor: Colors.transparent,
-      highlightColor: Colors.transparent,
-      onTap: () {
-        model?.login = '';
-        loginTextController?.text = '';
-      },
-      child: const Icon(
-        Icons.highlight_off,
-        color: AppColors.textFieldHint,
-        size: 16,
-      ),
-    );
-
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        TextField(
-          controller: loginTextController,
-          style: const TextStyle(
-            fontSize: 16,
-          ),
-          cursorColor: AppColors.logoBlue,
-          cursorHeight: 20,
-          onChanged: (text) => model?.login = text,
-          decoration: AppTextField.inputDecoration(
-            hintText: 'Введите почту',
-            isError: errorMessage != null,
-            suffixIcon: model?.isLogin == true ? suffixIcon : null,
-          ),
-          keyboardType: TextInputType.emailAddress,
+    if (errorMessage == null) return const SizedBox.shrink();
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 8.0),
+      child: Text(
+        errorMessage,
+        style: const TextStyle(
+          fontSize: 14,
+          color: AppColors.textFieldErrorText,
         ),
-        if (errorMessage != null)
-          Padding(
-            padding: const EdgeInsets.only(top: 8),
-            child: Text(
-              errorMessage,
-              style: const TextStyle(
-                fontSize: 14,
-                color: AppColors.textFieldErrorText,
-              ),
-            ),
-          ),
-      ],
+      ),
     );
   }
 }
@@ -171,14 +128,13 @@ class _LoginButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return OutlinedButton(
-      onPressed: () => NotifierProvider.read<LoginWidgetModel>(context)
-          ?.goToPasswordScreen(context),
+      onPressed: () =>
+          NotifierProvider.read<LoginWidgetModel>(context)?.auth(context),
       style: AppButtonStyle.blueStyleButton,
       child: const Text(
         'Войти',
         style: TextStyle(
-          color: Colors.white,
-          fontSize: 16,
+          fontSize: 18,
           fontWeight: FontWeight.w500,
         ),
       ),
@@ -186,25 +142,72 @@ class _LoginButton extends StatelessWidget {
   }
 }
 
-class _SingInButton extends StatelessWidget {
-  const _SingInButton({
+class _LoginWidgetFooter extends StatelessWidget {
+  const _LoginWidgetFooter({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Expanded(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.start,
+        children: const [
+          _ButtonsDivider(),
+          SizedBox(height: 16),
+          _LoginWithAppleButton(),
+        ],
+      ),
+    );
+  }
+}
+
+class _LoginWithAppleButton extends StatelessWidget {
+  const _LoginWithAppleButton({
     super.key,
   });
 
   @override
   Widget build(BuildContext context) {
-    final model = NotifierProvider.read<LoginWidgetModel>(context);
-
     return OutlinedButton(
-      onPressed: () => model?.auth(context),
-      style: AppButtonStyle.greenStyleButton,
-      child: const Text(
-        'Зарегистрироваться',
-        style: TextStyle(
-          color: Colors.white,
-          fontSize: 16,
-          fontWeight: FontWeight.w500,
-        ),
+      onPressed: () =>
+          NotifierProvider.read<LoginWidgetModel>(context)?.loginWithApple(),
+      style: AppButtonStyle.whiteStyleButton,
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: const [
+          Icon(
+            Icons.apple,
+            size: 36,
+          ),
+          Text(
+            'Войти через Apple',
+            style: TextStyle(
+              fontSize: 18,
+              fontWeight: FontWeight.w500,
+            ),
+          ),
+          Icon(
+            Icons.apple,
+            size: 36,
+            color: Colors.transparent,
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _ButtonsDivider extends StatelessWidget {
+  const _ButtonsDivider({
+    super.key,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return const Text(
+      'или',
+      style: TextStyle(
+        fontSize: 14,
+        color: AppColors.textFieldHint,
       ),
     );
   }

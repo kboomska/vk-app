@@ -87,4 +87,25 @@ abstract class AppButtonStyle {
       side: const MaterialStatePropertyAll(BorderSide.none),
     );
   }
+
+  static final ButtonStyle whiteStyleButton = ButtonStyle(
+    backgroundColor: const MaterialStatePropertyAll(
+      AppColors.appBackgroundColor,
+    ),
+    foregroundColor: const MaterialStatePropertyAll(
+      Colors.black,
+    ),
+    overlayColor: const MaterialStatePropertyAll(
+      Color.fromRGBO(38, 136, 235, 0.1),
+    ),
+    splashFactory: NoSplash.splashFactory,
+    minimumSize: const MaterialStatePropertyAll(
+      Size.fromHeight(44),
+    ),
+    shape: MaterialStatePropertyAll(
+      RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(8.0),
+      ),
+    ),
+  );
 }
