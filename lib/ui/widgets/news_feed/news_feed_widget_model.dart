@@ -4,6 +4,7 @@ import 'package:intl/intl.dart';
 
 import 'package:vk_app/domain/data_provider/access_data_provider.dart';
 import 'package:vk_app/domain/entity/news_feed/profiles/profile.dart';
+import 'package:vk_app/domain/api_client/api_client_exception.dart';
 import 'package:vk_app/domain/entity/news_feed/groups/group.dart';
 import 'package:vk_app/domain/entity/news_feed/posts/post.dart';
 import 'package:vk_app/domain/api_client/api_client.dart';

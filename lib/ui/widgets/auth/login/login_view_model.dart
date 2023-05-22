@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
+import 'package:vk_app/domain/api_client/api_client_exception.dart';
 import 'package:vk_app/ui/navigation/main_navigation.dart';
-import 'package:vk_app/domain/api_client/api_client.dart';
 import 'package:vk_app/domain/services/auth_service.dart';
 
 class LoginViewModel extends ChangeNotifier {
