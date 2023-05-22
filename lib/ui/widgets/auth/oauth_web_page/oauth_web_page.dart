@@ -3,29 +3,29 @@ import 'package:flutter/material.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 import 'package:vk_app/theme/app_colors.dart';
 
-class WebPageConfiguration {
+class OAuthWebPageConfiguration {
   final Uri uri;
   final String tokenEndpoint;
 
-  WebPageConfiguration(
+  OAuthWebPageConfiguration(
     this.uri,
     this.tokenEndpoint,
   );
 }
 
-class WebPageWidget extends StatefulWidget {
-  final WebPageConfiguration configuration;
+class OAuthWebPageWidget extends StatefulWidget {
+  final OAuthWebPageConfiguration configuration;
 
-  const WebPageWidget({
+  const OAuthWebPageWidget({
     super.key,
     required this.configuration,
   });
 
   @override
-  State<WebPageWidget> createState() => _WebPageWidgetState();
+  State<OAuthWebPageWidget> createState() => _OAuthWebPageWidgetState();
 }
 
-class _WebPageWidgetState extends State<WebPageWidget> {
+class _OAuthWebPageWidgetState extends State<OAuthWebPageWidget> {
   late WebViewController controller;
 
   @override
@@ -37,7 +37,7 @@ class _WebPageWidgetState extends State<WebPageWidget> {
       await WebViewCookieManager().clearCookies();
       await controller.clearLocalStorage();
 
-      Navigator.of(context).pop(response);
+      if (context.mounted) Navigator.of(context).pop(response);
     }
 
     controller = WebViewController()
@@ -60,7 +60,7 @@ class _WebPageWidgetState extends State<WebPageWidget> {
         if (await controller.canGoBack()) {
           controller.goBack();
         } else {
-          await backToLoginScreen(context);
+          if (context.mounted) await backToLoginScreen(context);
         }
         return false;
       },

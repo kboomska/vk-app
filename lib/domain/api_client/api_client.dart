@@ -4,8 +4,8 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 
 import 'package:vk_app/domain/entity/news_feed/posts/news_feed_response.dart';
+import 'package:vk_app/ui/widgets/auth/oauth_web_page/oauth_web_page.dart';
 import 'package:vk_app/domain/entity/news_feed/posts/json_response.dart';
-import 'package:vk_app/ui/widgets/auth/web_page/web_page.dart';
 import 'package:vk_app/ui/navigation/main_navigation.dart';
 
 enum ApiClientExceptionType { network, authCancel, accessToken, captcha, other }
@@ -58,7 +58,7 @@ class ApiClient {
 
     // print(authorizationUri);
 
-    final configuration = WebPageConfiguration(
+    final configuration = OAuthWebPageConfiguration(
       authorizationUri,
       _redirectUri,
     );

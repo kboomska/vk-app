@@ -1,13 +1,12 @@
 import 'package:flutter/material.dart';
 
+import 'package:vk_app/ui/widgets/auth/oauth_web_page/oauth_web_page.dart';
 import 'package:vk_app/ui/widgets/messages/messages_widget.dart';
-import 'package:vk_app/ui/widgets/auth/web_page/web_page.dart';
 import 'package:vk_app/domain/factories/screen_factory.dart';
 
 abstract class MainNavigationRouteNames {
   static const loader = '/';
   static const login = '/login';
-  static const password = '/login/password';
   static const oauth = '/login/oauth';
   static const home = '/home';
   static const chatForm = '/home/chatForm';
@@ -26,14 +25,9 @@ class MainNavigation {
   Route<Object> onGenerateRoute(RouteSettings settings) {
     switch (settings.name) {
       case MainNavigationRouteNames.oauth:
-        final configuration = settings.arguments as WebPageConfiguration;
+        final configuration = settings.arguments as OAuthWebPageConfiguration;
         return MaterialPageRoute(
-          builder: (_) => _screenFactory.createOAuth(configuration),
-        );
-      case MainNavigationRouteNames.password:
-        final login = settings.arguments as String;
-        return MaterialPageRoute(
-          builder: (_) => _screenFactory.createPassword(login),
+          builder: (_) => _screenFactory.createOAuthWebPage(configuration),
         );
       case MainNavigationRouteNames.messages:
         final configuration = settings.arguments as MessagesWidgetConfiguration;
