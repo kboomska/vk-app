@@ -4,7 +4,7 @@ import 'package:vk_app/domain/data_provider/access_data_provider.dart';
 import 'package:vk_app/ui/navigation/main_navigation.dart';
 import 'package:vk_app/domain/api_client/api_client.dart';
 
-class LoginWidgetModel extends ChangeNotifier {
+class LoginViewModel extends ChangeNotifier {
   final _client = ApiClient();
   final _accessDataProvider = AccessDataProvider();
 

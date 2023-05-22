@@ -1,18 +1,14 @@
 import 'package:flutter/material.dart';
 
-import 'package:vk_app/ui/widgets/auth/login/login_widget_model.dart';
-import 'package:vk_app/Library/Widgets/Inherited/provider.dart';
+import 'package:provider/provider.dart';
+
+import 'package:vk_app/ui/widgets/auth/login/login_view_model.dart';
 import 'package:vk_app/theme/app_button_style.dart';
 import 'package:vk_app/theme/app_colors.dart';
 
-class LoginWidget extends StatefulWidget {
+class LoginWidget extends StatelessWidget {
   const LoginWidget({super.key});
 
-  @override
-  State<LoginWidget> createState() => _LoginWidgetState();
-}
-
-class _LoginWidgetState extends State<LoginWidget> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -103,8 +99,8 @@ class _ErrorMessageWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final model = NotifierProvider.watch<LoginWidgetModel>(context);
-    final errorMessage = model?.errorMessage;
+    final errorMessage =
+        context.select((LoginViewModel model) => model.errorMessage);
 
     if (errorMessage == null) return const SizedBox.shrink();
     return Padding(
@@ -128,8 +124,7 @@ class _LoginButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return OutlinedButton(
-      onPressed: () =>
-          NotifierProvider.read<LoginWidgetModel>(context)?.auth(context),
+      onPressed: () => context.read<LoginViewModel>().auth(context),
       style: AppButtonStyle.blueStyleButton,
       child: const Text(
         'Войти',
@@ -168,8 +163,7 @@ class _LoginWithAppleButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return OutlinedButton(
-      onPressed: () =>
-          NotifierProvider.read<LoginWidgetModel>(context)?.loginWithApple(),
+      onPressed: () => context.read<LoginViewModel>().loginWithApple(),
       style: AppButtonStyle.whiteStyleButton,
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
