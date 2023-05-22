@@ -2,15 +2,13 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 
-import 'package:vk_app/domain/entity/news_feed/posts/news_feed_response.dart';
 import 'package:vk_app/ui/widgets/auth/oauth_web_page/oauth_web_page.dart';
-import 'package:vk_app/domain/entity/news_feed/posts/json_response.dart';
 import 'package:vk_app/domain/api_client/api_client_exception.dart';
 import 'package:vk_app/domain/api_client/network_client.dart';
 import 'package:vk_app/ui/navigation/main_navigation.dart';
 import 'package:vk_app/configuration/configuration.dart';
 
-class ApiClient {
+class AuthApiClient {
   final _networkClient = NetworkClient();
 
   Future<String> auth(BuildContext context) async {
@@ -49,30 +47,6 @@ class ApiClient {
     } catch (_) {
       throw ApiClientException(ApiClientExceptionType.other);
     }
-  }
-
-  Future<NewsFeedResponse> getNewsFeed(
-      String? accessToken, String? startFrom) async {
-    parser(dynamic json) {
-      final jsonMap = json as Map<String, dynamic>;
-      final jsonResponse = JsonResponse.fromJson(jsonMap);
-      return jsonResponse.response;
-    }
-
-    final parameters = <String, dynamic>{
-      'filters': 'post',
-      'start_from': startFrom,
-      'access_token': accessToken,
-      'v': Configuration.versionApi,
-    };
-
-    final result = _networkClient.post(
-      '/newsfeed.get',
-      parser,
-      parameters,
-    );
-
-    return result;
   }
 
   String _checkAuthResponse(Object? response) {

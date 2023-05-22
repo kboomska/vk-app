@@ -4,14 +4,14 @@ import 'package:intl/intl.dart';
 
 import 'package:vk_app/domain/data_provider/access_data_provider.dart';
 import 'package:vk_app/domain/entity/news_feed/profiles/profile.dart';
+import 'package:vk_app/domain/api_client/news_feed_api_client.dart';
 import 'package:vk_app/domain/api_client/api_client_exception.dart';
 import 'package:vk_app/domain/entity/news_feed/groups/group.dart';
 import 'package:vk_app/domain/entity/news_feed/posts/post.dart';
-import 'package:vk_app/domain/api_client/api_client.dart';
 
 class NewsFeedWidgetModel extends ChangeNotifier {
   final _accessDataProvider = AccessDataProvider();
-  final _apiClient = ApiClient();
+  final _newsFeedApiClient = NewsFeedApiClient();
   final _posts = <Post>[];
   final _groups = <Group>[];
   final _profiles = <Profile>[];
@@ -96,7 +96,7 @@ class NewsFeedWidgetModel extends ChangeNotifier {
 
     try {
       final newsFeedsResponse =
-          await _apiClient.getNewsFeed(accessToken, _nextFrom);
+          await _newsFeedApiClient.getNewsFeed(accessToken, _nextFrom);
       _posts.addAll(newsFeedsResponse.posts);
 
       _groups.addAll(newsFeedsResponse.groups);
@@ -117,15 +117,7 @@ class NewsFeedWidgetModel extends ChangeNotifier {
     _loadNewsFeeds();
   }
 
-  void onTapLikeButton({required int index}) {
-    // _posts[index].isLiked = !_posts[index].isLiked;
-    // if (_posts[index].isLiked) {
-    //   _posts[index].reactions += 1;
-    // } else {
-    //   _posts[index].reactions -= 1;
-    // }
-    // notifyListeners();
-  }
+  void onTapLikeButton({required int index}) {}
 
   void _handleApiClientException(ApiClientException exception) {
     switch (exception.type) {
