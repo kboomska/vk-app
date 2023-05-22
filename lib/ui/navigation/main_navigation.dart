@@ -41,4 +41,9 @@ class MainNavigation {
         );
     }
   }
+
+  static void resetNavigation(BuildContext context) {
+    Navigator.of(context).pushNamedAndRemoveUntil(
+        MainNavigationRouteNames.loader, (route) => false);
+  }
 }

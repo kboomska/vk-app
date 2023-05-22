@@ -1,56 +1,45 @@
 import 'package:flutter/material.dart';
 
-import 'package:vk_app/domain/data_provider/access_data_provider.dart';
 import 'package:vk_app/ui/navigation/main_navigation.dart';
 import 'package:vk_app/domain/api_client/api_client.dart';
+import 'package:vk_app/domain/services/auth_service.dart';
 
 class LoginViewModel extends ChangeNotifier {
-  final _client = ApiClient();
-  final _accessDataProvider = AccessDataProvider();
+  final _authService = AuthService();
 
   String? _errorMessage;
   String? get errorMessage => _errorMessage;
 
   Future<void> auth(BuildContext context) async {
-    String? accessToken;
+    _errorMessage = await _login(context);
 
-    _errorMessage = null;
+    if (_errorMessage == null) {
+      if (context.mounted) {
+        MainNavigation.resetNavigation(context);
+      }
+    } else {
+      notifyListeners();
+    }
+  }
+
+  Future<String?> _login(BuildContext context) async {
     try {
-      accessToken = await _client.auth(context);
+      await _authService.auth(context);
     } on ApiClientException catch (e) {
       switch (e.type) {
         case ApiClientExceptionType.network:
-          _errorMessage =
-              'Сервер не доступен. Проверьте подключение к интернету';
-          break;
+          return 'Сервер не доступен. Проверьте подключение к интернету';
         case ApiClientExceptionType.authCancel:
-          _errorMessage = 'Авторизация отменена пользователем';
-          break;
+          return 'Авторизация отменена пользователем';
         case ApiClientExceptionType.other:
-          _errorMessage = 'Произошла ошибка. Попробуйте ещё раз';
-          break;
+          return 'Произошла ошибка. Попробуйте ещё раз';
         default:
           break;
       }
+    } catch (e) {
+      return 'Ошибка авторизации, повторите попытку';
     }
-
-    print('Auth token: $accessToken');
-
-    if (_errorMessage != null) {
-      notifyListeners();
-      return;
-    }
-
-    if (accessToken == null) {
-      _errorMessage = 'Ошибка авторизации, повторите попытку';
-      notifyListeners();
-      return;
-    }
-
-    await _accessDataProvider.setAccessToken(accessToken);
-    if (context.mounted) {
-      Navigator.of(context).pushReplacementNamed(MainNavigationRouteNames.home);
-    }
+    return null;
   }
 
   void loginWithApple() {
