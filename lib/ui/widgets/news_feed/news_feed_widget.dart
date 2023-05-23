@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import 'package:vk_app/ui/widgets/news_feed/news_feed_widget_model.dart';
+import 'package:vk_app/ui/widgets/news_feed/news_feed_view_model.dart';
 import 'package:vk_app/domain/data_provider/access_data_provider.dart';
 import 'package:vk_app/domain/entity/news_feed/posts/attachment.dart';
 import 'package:vk_app/Library/Widgets/Inherited/provider.dart';
@@ -11,7 +11,7 @@ class NewsFeedWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final model = NotifierProvider.read<NewsFeedWidgetModel>(context);
+    final model = NotifierProvider.read<NewsFeedViewModel>(context);
 
     return Scaffold(
       appBar: AppBar(
@@ -50,7 +50,7 @@ class _PostListWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final postsCount =
-        NotifierProvider.watch<NewsFeedWidgetModel>(context)?.posts.length ?? 0;
+        NotifierProvider.watch<NewsFeedViewModel>(context)?.posts.length ?? 0;
 
     return ListView.separated(
       itemCount: postsCount,
@@ -74,7 +74,7 @@ class _PostCardWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final model = NotifierProvider.read<NewsFeedWidgetModel>(context);
+    final model = NotifierProvider.read<NewsFeedViewModel>(context);
     model?.fetchPostsAtIndex(index);
     final post = model!.posts[index];
 
@@ -122,7 +122,7 @@ class _PostCardHeaderWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final model = NotifierProvider.read<NewsFeedWidgetModel>(context);
+    final model = NotifierProvider.read<NewsFeedViewModel>(context);
     final sourceData = model?.getPostHeaderData(sourceId);
 
     return Padding(
@@ -256,7 +256,7 @@ class _PostCardFooterWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final model = NotifierProvider.read<NewsFeedWidgetModel>(context);
+    final model = NotifierProvider.read<NewsFeedViewModel>(context);
     final post = model!.posts[index];
     final String reposts = model.stringCounter(post.reposts.count);
     final String comments = model.stringCounter(post.comments.count);
@@ -330,7 +330,7 @@ class _PostCardLikeButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final model = NotifierProvider.read<NewsFeedWidgetModel>(context);
+    final model = NotifierProvider.read<NewsFeedViewModel>(context);
     final post = model!.posts[index];
     final String likesCount = model.stringCounter(post.likes.count);
     final bool isLiked = post.likes.userLikes == 1;
@@ -338,7 +338,7 @@ class _PostCardLikeButton extends StatelessWidget {
     return Material(
       borderRadius: BorderRadius.circular(16),
       child: InkWell(
-        onTap: () => NotifierProvider.watch<NewsFeedWidgetModel>(context)
+        onTap: () => NotifierProvider.watch<NewsFeedViewModel>(context)
             ?.onTapLikeButton(index: index),
         borderRadius: BorderRadius.circular(16),
         child: Container(

@@ -9,7 +9,7 @@ import 'package:vk_app/domain/api_client/api_client_exception.dart';
 import 'package:vk_app/domain/entity/news_feed/groups/group.dart';
 import 'package:vk_app/domain/entity/news_feed/posts/post.dart';
 
-class NewsFeedWidgetModel extends ChangeNotifier {
+class NewsFeedViewModel extends ChangeNotifier {
   final _accessDataProvider = AccessDataProvider();
   final _newsFeedApiClient = NewsFeedApiClient();
   final _posts = <Post>[];

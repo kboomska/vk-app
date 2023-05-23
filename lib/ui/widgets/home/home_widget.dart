@@ -1,10 +1,6 @@
 import 'package:flutter/material.dart';
 
-import 'package:vk_app/ui/widgets/news_feed/news_feed_widget_model.dart';
-import 'package:vk_app/ui/widgets/news_feed/news_feed_widget.dart';
-import 'package:vk_app/Library/Widgets/Inherited/provider.dart';
-import 'package:vk_app/ui/widgets/chats/chats_widget.dart';
-import 'package:vk_app/ui/widgets/app/vk_app_model.dart';
+import 'package:vk_app/domain/factories/screen_factory.dart';
 import 'package:vk_app/theme/app_colors.dart';
 
 class HomeWidget extends StatefulWidget {
@@ -15,7 +11,7 @@ class HomeWidget extends StatefulWidget {
 }
 
 class _HomeWidgetState extends State<HomeWidget> {
-  final newsFeedWidgetModel = NewsFeedWidgetModel();
+  final _screenFactory = ScreenFactory();
   int _selectedTab = 0;
 
   static const List<String> _appBarOptions = [
@@ -29,20 +25,6 @@ class _HomeWidgetState extends State<HomeWidget> {
     setState(() {
       _selectedTab = index;
     });
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    final vkAppModel = Provider.read<VKAppModel>(context);
-    newsFeedWidgetModel.onAccessTokenExpired =
-        () => vkAppModel?.resetSession(context);
-  }
-
-  @override
-  void didChangeDependencies() async {
-    super.didChangeDependencies();
-    await newsFeedWidgetModel.setupLocale(context);
   }
 
   @override
@@ -75,11 +57,8 @@ class _HomeWidgetState extends State<HomeWidget> {
       body: IndexedStack(
         index: _selectedTab,
         children: [
-          NotifierProvider(
-            model: newsFeedWidgetModel,
-            child: const NewsFeedWidget(),
-          ),
-          const ChatsWidget(),
+          _screenFactory.createNewsFeed(),
+          _screenFactory.createChats(),
           Center(child: Text(_appBarOptions[2])),
         ],
       ),
