@@ -1,18 +1,27 @@
 import 'package:flutter/material.dart';
 
+import 'package:provider/provider.dart';
+
 import 'package:vk_app/ui/widgets/news_feed/news_feed_view_model.dart';
 import 'package:vk_app/domain/data_provider/access_data_provider.dart';
-import 'package:vk_app/domain/entity/news_feed/posts/attachment.dart';
-import 'package:vk_app/Library/Widgets/Inherited/provider.dart';
 import 'package:vk_app/theme/app_colors.dart';
 
-class NewsFeedWidget extends StatelessWidget {
+class NewsFeedWidget extends StatefulWidget {
   const NewsFeedWidget({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    final model = NotifierProvider.read<NewsFeedViewModel>(context);
+  State<NewsFeedWidget> createState() => _NewsFeedWidgetState();
+}
 
+class _NewsFeedWidgetState extends State<NewsFeedWidget> {
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    context.read<NewsFeedViewModel>().setupLocale(context);
+  }
+
+  @override
+  Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: AppColors.appBackgroundColor,
@@ -49,15 +58,15 @@ class _PostListWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final postsCount =
-        NotifierProvider.watch<NewsFeedViewModel>(context)?.posts.length ?? 0;
+    final model = context.watch<NewsFeedViewModel>();
 
     return ListView.separated(
-      itemCount: postsCount,
+      itemCount: model.posts.length,
       separatorBuilder: (context, index) => const SizedBox(
         height: 8,
       ),
       itemBuilder: (context, index) {
+        model.fetchPostsAtIndex(index);
         return _PostCardWidget(index: index);
       },
     );
@@ -74,9 +83,8 @@ class _PostCardWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final model = NotifierProvider.read<NewsFeedViewModel>(context);
-    model?.fetchPostsAtIndex(index);
-    final post = model!.posts[index];
+    final model = context.read<NewsFeedViewModel>();
+    final post = model.posts[index];
 
     return DecoratedBox(
       decoration: BoxDecoration(
@@ -87,16 +95,12 @@ class _PostCardWidget extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           _PostCardHeaderWidget(
-            // avatar: post.avatar,
-            // author: post.author,
-            sourceId: post.sourceId,
-            date: model.stringDate(post.date),
+            author: post.sourceName,
+            avatar: post.sourcePhoto,
+            date: post.postDate,
           ),
-          _PostCardTextWidget(text: post.text),
-          if (post.attachments.isNotEmpty)
-            _PostCardMediaWidget(
-              attachment: post.attachments.first,
-            ),
+          _PostCardTextWidget(text: post.postText),
+          _PostCardMediaWidget(attachment: post.postAttachment),
           _PostCardFooterWidget(
             index: index,
           ),
@@ -107,24 +111,19 @@ class _PostCardWidget extends StatelessWidget {
 }
 
 class _PostCardHeaderWidget extends StatelessWidget {
-  // final String avatar;
-  // final String author;
-  final int sourceId;
+  final String avatar;
+  final String author;
   final String date;
 
   const _PostCardHeaderWidget({
     super.key,
-    // required this.avatar,
-    // required this.author,
-    required this.sourceId,
+    required this.avatar,
+    required this.author,
     required this.date,
   });
 
   @override
   Widget build(BuildContext context) {
-    final model = NotifierProvider.read<NewsFeedViewModel>(context);
-    final sourceData = model?.getPostHeaderData(sourceId);
-
     return Padding(
       padding: const EdgeInsets.only(top: 12, left: 12, right: 12),
       child: Row(
@@ -136,11 +135,7 @@ class _PostCardHeaderWidget extends StatelessWidget {
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(20),
             ),
-            child: sourceData != null && sourceData.isNotEmpty
-                ? Image.network(
-                    sourceData['photo'],
-                  )
-                : null,
+            child: Image.network(avatar),
           ),
           const SizedBox(
             width: 8,
@@ -149,9 +144,7 @@ class _PostCardHeaderWidget extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                sourceData != null && sourceData.isNotEmpty
-                    ? sourceData['name']
-                    : '',
+                author,
                 style: const TextStyle(
                   fontSize: 15,
                   fontWeight: FontWeight.w700,
@@ -174,9 +167,7 @@ class _PostCardHeaderWidget extends StatelessWidget {
           ),
           const Spacer(),
           IconButton(
-            onPressed: () {
-              print('Post actions');
-            },
+            onPressed: () {},
             iconSize: 24,
             constraints: BoxConstraints.tight(const Size(40, 40)),
             icon: const Icon(
@@ -218,20 +209,18 @@ class _PostCardTextWidget extends StatelessWidget {
 }
 
 class _PostCardMediaWidget extends StatelessWidget {
-  final Attachment attachment;
+  final String attachment;
 
   const _PostCardMediaWidget({super.key, required this.attachment});
 
   @override
   Widget build(BuildContext context) {
-    Widget setAttachment(Attachment attachment) {
-      if (attachment.type == 'photo') {
+    Widget setAttachment(String attachment) {
+      if (attachment.isNotEmpty) {
         return Center(
           child: ConstrainedBox(
             constraints: const BoxConstraints(maxHeight: 510),
-            child: Image.network(
-              attachment.photo!.sizes.last.url,
-            ),
+            child: Image.network(attachment),
           ),
         );
       } else {
@@ -256,10 +245,9 @@ class _PostCardFooterWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final model = NotifierProvider.read<NewsFeedViewModel>(context);
-    final post = model!.posts[index];
-    final String reposts = model.stringCounter(post.reposts.count);
-    final String comments = model.stringCounter(post.comments.count);
+    final model = context.read<NewsFeedViewModel>();
+    final post = model.posts[index];
+    final views = post.views;
 
     return Padding(
       padding: const EdgeInsets.only(left: 8, right: 8, bottom: 8),
@@ -272,7 +260,7 @@ class _PostCardFooterWidget extends StatelessWidget {
             width: 8,
           ),
           _PostCardBottomButton(
-            buttonCounter: comments,
+            buttonCounter: post.comments,
             buttonIcon: const Icon(
               Icons.messenger_outline_outlined,
               color: AppColors.postBottomButtons,
@@ -283,7 +271,7 @@ class _PostCardFooterWidget extends StatelessWidget {
             width: 8,
           ),
           _PostCardBottomButton(
-            buttonCounter: reposts,
+            buttonCounter: post.reposts,
             buttonIcon: const Icon(
               Icons.reply_rounded,
               color: AppColors.postBottomButtons,
@@ -292,7 +280,7 @@ class _PostCardFooterWidget extends StatelessWidget {
             ),
           ),
           const Spacer(),
-          if (post.views != null)
+          if (views != null)
             Row(
               children: [
                 const Icon(
@@ -305,7 +293,7 @@ class _PostCardFooterWidget extends StatelessWidget {
                   width: 8,
                 ),
                 Text(
-                  model.stringCounter(post.views!.count),
+                  views,
                   style: const TextStyle(
                     fontSize: 14,
                     fontWeight: FontWeight.w400,
@@ -330,21 +318,18 @@ class _PostCardLikeButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final model = NotifierProvider.read<NewsFeedViewModel>(context);
-    final post = model!.posts[index];
-    final String likesCount = model.stringCounter(post.likes.count);
-    final bool isLiked = post.likes.userLikes == 1;
+    final model = context.read<NewsFeedViewModel>();
+    final post = model.posts[index];
 
     return Material(
       borderRadius: BorderRadius.circular(16),
       child: InkWell(
-        onTap: () => NotifierProvider.watch<NewsFeedViewModel>(context)
-            ?.onTapLikeButton(index: index),
+        onTap: () => model.onTapLikeButton(index: index),
         borderRadius: BorderRadius.circular(16),
         child: Container(
           height: 32,
           decoration: BoxDecoration(
-            color: isLiked
+            color: post.userLikes
                 ? AppColors.postLikedButtonBackground
                 : AppColors.postBottomButtonsBackground,
             borderRadius: BorderRadius.circular(16),
@@ -355,7 +340,7 @@ class _PostCardLikeButton extends StatelessWidget {
               children: [
                 Icon(
                   Icons.favorite_outline,
-                  color: isLiked
+                  color: post.userLikes
                       ? AppColors.postLikedButton
                       : AppColors.postBottomButtons,
                   size: 24,
@@ -364,11 +349,11 @@ class _PostCardLikeButton extends StatelessWidget {
                   width: 4,
                 ),
                 Text(
-                  likesCount,
+                  post.likes,
                   style: TextStyle(
                     fontSize: 13,
                     fontWeight: FontWeight.w500,
-                    color: isLiked
+                    color: post.userLikes
                         ? AppColors.postLikedButton
                         : AppColors.postBottomButtons,
                   ),

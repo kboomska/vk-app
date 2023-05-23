@@ -4,15 +4,42 @@ import 'package:intl/intl.dart';
 
 import 'package:vk_app/domain/data_provider/access_data_provider.dart';
 import 'package:vk_app/domain/entity/news_feed/profiles/profile.dart';
-import 'package:vk_app/domain/api_client/news_feed_api_client.dart';
+import 'package:vk_app/domain/entity/news_feed/posts/attachment.dart';
 import 'package:vk_app/domain/api_client/api_client_exception.dart';
+import 'package:vk_app/domain/api_client/news_feed_api_client.dart';
 import 'package:vk_app/domain/entity/news_feed/groups/group.dart';
 import 'package:vk_app/domain/entity/news_feed/posts/post.dart';
+
+class PostPreparedData {
+  final String sourcePhoto;
+  final String sourceName;
+  final String postDate;
+  final String postText;
+  final String postAttachment;
+  final String likes;
+  final bool userLikes;
+  final String comments;
+  final String reposts;
+  final String? views;
+
+  PostPreparedData({
+    required this.sourcePhoto,
+    required this.sourceName,
+    required this.postDate,
+    required this.postText,
+    required this.postAttachment,
+    required this.likes,
+    required this.userLikes,
+    required this.comments,
+    required this.reposts,
+    required this.views,
+  });
+}
 
 class NewsFeedViewModel extends ChangeNotifier {
   final _accessDataProvider = AccessDataProvider();
   final _newsFeedApiClient = NewsFeedApiClient();
-  final _posts = <Post>[];
+  final _posts = <PostPreparedData>[];
   final _groups = <Group>[];
   final _profiles = <Profile>[];
   bool _isLoadingInProgress = false;
@@ -23,9 +50,9 @@ class NewsFeedViewModel extends ChangeNotifier {
 
   Future<void>? Function()? onAccessTokenExpired;
 
-  List<Post> get posts => List.unmodifiable(_posts);
+  List<PostPreparedData> get posts => List.unmodifiable(_posts);
 
-  String stringDate(DateTime date) {
+  String _stringDate(DateTime date) {
     late String day;
     final now = DateTime.now();
     final today = DateTime(now.year, now.month, now.day);
@@ -59,7 +86,7 @@ class NewsFeedViewModel extends ChangeNotifier {
     await _loadNewsFeeds();
   }
 
-  String stringCounter(int counter) {
+  String _stringCounter(int counter) {
     String result;
     if (counter < 1000) {
       result = counter.toString();
@@ -75,7 +102,7 @@ class NewsFeedViewModel extends ChangeNotifier {
     return result;
   }
 
-  Map<String, dynamic> getPostHeaderData(int sourceId) {
+  Map<String, dynamic> _getPostHeaderData(int sourceId) {
     final sourceData = <String, dynamic>{};
     if (sourceId < 0) {
       final group = _groups.firstWhere((group) => group.id == sourceId.abs());
@@ -97,10 +124,10 @@ class NewsFeedViewModel extends ChangeNotifier {
     try {
       final newsFeedsResponse =
           await _newsFeedApiClient.getNewsFeed(accessToken, _nextFrom);
-      _posts.addAll(newsFeedsResponse.posts);
 
       _groups.addAll(newsFeedsResponse.groups);
       _profiles.addAll(newsFeedsResponse.profiles);
+      _posts.addAll(newsFeedsResponse.posts.map(_preparePostData));
       _nextFrom = newsFeedsResponse.nextFrom;
 
       _isLoadingInProgress = false;
@@ -109,6 +136,33 @@ class NewsFeedViewModel extends ChangeNotifier {
       _handleApiClientException(e);
     } catch (e) {
       _isLoadingInProgress = false;
+    }
+  }
+
+  PostPreparedData _preparePostData(Post post) {
+    final sourceData = _getPostHeaderData(post.sourceId);
+    final views = post.views?.count;
+    return PostPreparedData(
+      sourceName: sourceData['name'],
+      sourcePhoto: sourceData['photo'],
+      postDate: _stringDate(post.date),
+      postText: post.text,
+      postAttachment: _setAttachmentByType(post.attachments),
+      likes: _stringCounter(post.likes.count),
+      userLikes: post.likes.userLikes == 1,
+      comments: _stringCounter(post.comments.count),
+      reposts: _stringCounter(post.reposts.count),
+      views: views != null ? _stringCounter(views) : null,
+    );
+  }
+
+  String _setAttachmentByType(List<Attachment> attachments) {
+    if (attachments.isEmpty) return '';
+    final attachment = attachments.first;
+    if (attachment.type == 'photo') {
+      return attachment.photo!.sizes.last.url;
+    } else {
+      return '';
     }
   }
 
