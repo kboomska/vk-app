@@ -8,6 +8,7 @@ import 'package:vk_app/domain/api_client/api_client_exception.dart';
 import 'package:vk_app/domain/entity/news_feed/groups/group.dart';
 import 'package:vk_app/domain/entity/news_feed/posts/post.dart';
 import 'package:vk_app/domain/services/news_feed_service.dart';
+import 'package:vk_app/domain/services/auth_service.dart';
 
 class PostData {
   final PostSourceData sourceData;
@@ -45,6 +46,7 @@ class PostSourceData {
 
 class NewsFeedViewModel extends ChangeNotifier {
   final _newsFeedService = NewsFeedService();
+  final _authService = AuthService();
   final _posts = <PostData>[];
   final _groups = <Group>[];
   final _profiles = <Profile>[];
@@ -53,8 +55,6 @@ class NewsFeedViewModel extends ChangeNotifier {
   late DateFormat _dateFormat;
   late DateFormat _timeFormat;
   String _locale = '';
-
-  Future<void>? Function()? onAccessTokenExpired;
 
   List<PostData> get posts => List.unmodifiable(_posts);
 
@@ -66,20 +66,20 @@ class NewsFeedViewModel extends ChangeNotifier {
     _dateFormat = DateFormat.MMMMd(_locale);
     _timeFormat = DateFormat.Hm(_locale);
 
-    await _resetNewsFeed();
+    await _resetNewsFeed(context);
   }
 
-  Future<void> _resetNewsFeed() async {
+  Future<void> _resetNewsFeed(BuildContext context) async {
     _posts.clear();
-    await _loadNewsFeeds();
+    await _loadNewsFeeds(context);
   }
 
-  void fetchPostsAtIndex(int index) {
+  void fetchPostsAtIndex(int index, BuildContext context) {
     if (index < _posts.length - 1) return;
-    _loadNewsFeeds();
+    _loadNewsFeeds(context);
   }
 
-  Future<void> _loadNewsFeeds() async {
+  Future<void> _loadNewsFeeds(BuildContext context) async {
     if (_isLoadingInProgress) return;
     _isLoadingInProgress = true;
 
@@ -94,7 +94,7 @@ class NewsFeedViewModel extends ChangeNotifier {
       _isLoadingInProgress = false;
       notifyListeners();
     } on ApiClientException catch (e) {
-      _handleApiClientException(e);
+      _handleApiClientException(e, context);
     } catch (e) {
       _isLoadingInProgress = false;
     }
@@ -176,13 +176,20 @@ class NewsFeedViewModel extends ChangeNotifier {
 
   void onTapLikeButton({required int index}) {}
 
-  void _handleApiClientException(ApiClientException exception) {
+  void logout(BuildContext context) {
+    _authService.logout(context);
+  }
+
+  void _handleApiClientException(
+    ApiClientException exception,
+    BuildContext context,
+  ) {
     switch (exception.type) {
       case ApiClientExceptionType.network:
         print('Сервер не доступен. Проверьте подключение к интернету.');
         break;
       case ApiClientExceptionType.accessToken:
-        onAccessTokenExpired?.call();
+        logout(context);
         break;
       case ApiClientExceptionType.captcha:
         print('Требуется ввод кода с картинки (Captcha).');

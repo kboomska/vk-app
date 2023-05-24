@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import 'package:vk_app/ui/widgets/news_feed/news_feed_view_model.dart';
-import 'package:vk_app/domain/data_provider/access_data_provider.dart';
 import 'package:vk_app/theme/app_colors.dart';
 
 class NewsFeedWidget extends StatefulWidget {
@@ -22,6 +21,8 @@ class _NewsFeedWidgetState extends State<NewsFeedWidget> {
 
   @override
   Widget build(BuildContext context) {
+    final model = context.read<NewsFeedViewModel>();
+
     return Scaffold(
       appBar: AppBar(
         backgroundColor: AppColors.appBackgroundColor,
@@ -38,7 +39,7 @@ class _NewsFeedWidgetState extends State<NewsFeedWidget> {
         ),
         actions: [
           IconButton(
-            onPressed: () => AccessDataProvider().setAccessToken(null),
+            onPressed: () => model.logout(context),
             icon: const Icon(Icons.logout),
           ),
         ],
@@ -66,7 +67,7 @@ class _PostListWidget extends StatelessWidget {
         height: 8,
       ),
       itemBuilder: (context, index) {
-        model.fetchPostsAtIndex(index);
+        model.fetchPostsAtIndex(index, context);
         return _PostCardWidget(index: index);
       },
     );

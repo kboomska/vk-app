@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import 'package:vk_app/domain/data_provider/access_data_provider.dart';
 import 'package:vk_app/domain/api_client/auth_api_client.dart';
+import 'package:vk_app/ui/navigation/main_navigation.dart';
 
 class AuthService {
   final _accessDataProvider = AccessDataProvider();
@@ -17,5 +18,10 @@ class AuthService {
 
     print('Auth token: $accessToken');
     await _accessDataProvider.setAccessToken(accessToken);
+  }
+
+  Future<void> logout(BuildContext context) async {
+    await _accessDataProvider.removeAccessToken();
+    if (context.mounted) MainNavigation.resetNavigation(context);
   }
 }
