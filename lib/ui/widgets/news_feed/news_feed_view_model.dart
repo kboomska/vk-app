@@ -10,9 +10,8 @@ import 'package:vk_app/domain/api_client/news_feed_api_client.dart';
 import 'package:vk_app/domain/entity/news_feed/groups/group.dart';
 import 'package:vk_app/domain/entity/news_feed/posts/post.dart';
 
-class PostPreparedData {
-  final String sourcePhoto;
-  final String sourceName;
+class PostData {
+  final PostSourceData sourceData;
   final String postDate;
   final String postText;
   final String postAttachment;
@@ -22,9 +21,8 @@ class PostPreparedData {
   final String reposts;
   final String? views;
 
-  PostPreparedData({
-    required this.sourcePhoto,
-    required this.sourceName,
+  PostData({
+    required this.sourceData,
     required this.postDate,
     required this.postText,
     required this.postAttachment,
@@ -36,10 +34,20 @@ class PostPreparedData {
   });
 }
 
+class PostSourceData {
+  final String name;
+  final String photo;
+
+  PostSourceData({
+    required this.name,
+    required this.photo,
+  });
+}
+
 class NewsFeedViewModel extends ChangeNotifier {
   final _accessDataProvider = AccessDataProvider();
   final _newsFeedApiClient = NewsFeedApiClient();
-  final _posts = <PostPreparedData>[];
+  final _posts = <PostData>[];
   final _groups = <Group>[];
   final _profiles = <Profile>[];
   bool _isLoadingInProgress = false;
@@ -50,7 +58,7 @@ class NewsFeedViewModel extends ChangeNotifier {
 
   Future<void>? Function()? onAccessTokenExpired;
 
-  List<PostPreparedData> get posts => List.unmodifiable(_posts);
+  List<PostData> get posts => List.unmodifiable(_posts);
 
   String _stringDate(DateTime date) {
     late String day;
@@ -102,16 +110,17 @@ class NewsFeedViewModel extends ChangeNotifier {
     return result;
   }
 
-  Map<String, dynamic> _getPostHeaderData(int sourceId) {
-    final sourceData = <String, dynamic>{};
+  PostSourceData _getPostSourceData(int sourceId) {
+    final PostSourceData sourceData;
     if (sourceId < 0) {
       final group = _groups.firstWhere((group) => group.id == sourceId.abs());
-      sourceData['name'] = group.name;
-      sourceData['photo'] = group.photo50;
+      sourceData = PostSourceData(name: group.name, photo: group.photo50);
     } else {
       final profile = _profiles.firstWhere((profile) => profile.id == sourceId);
-      sourceData['name'] = '${profile.firstName} ${profile.lastName}';
-      sourceData['photo'] = profile.photo50;
+      sourceData = PostSourceData(
+        name: '${profile.firstName} ${profile.lastName}',
+        photo: profile.photo50,
+      );
     }
     return sourceData;
   }
@@ -139,12 +148,10 @@ class NewsFeedViewModel extends ChangeNotifier {
     }
   }
 
-  PostPreparedData _preparePostData(Post post) {
-    final sourceData = _getPostHeaderData(post.sourceId);
+  PostData _preparePostData(Post post) {
     final views = post.views?.count;
-    return PostPreparedData(
-      sourceName: sourceData['name'],
-      sourcePhoto: sourceData['photo'],
+    return PostData(
+      sourceData: _getPostSourceData(post.sourceId),
       postDate: _stringDate(post.date),
       postText: post.text,
       postAttachment: _setAttachmentByType(post.attachments),

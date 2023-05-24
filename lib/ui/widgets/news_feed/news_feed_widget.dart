@@ -95,8 +95,8 @@ class _PostCardWidget extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           _PostCardHeaderWidget(
-            author: post.sourceName,
-            avatar: post.sourcePhoto,
+            author: post.sourceData.name,
+            avatar: post.sourceData.photo,
             date: post.postDate,
           ),
           _PostCardTextWidget(text: post.postText),
