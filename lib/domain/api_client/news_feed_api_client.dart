@@ -1,13 +1,15 @@
 import 'package:vk_app/domain/entity/news_feed/posts/news_feed_response.dart';
 import 'package:vk_app/domain/entity/news_feed/posts/json_response.dart';
 import 'package:vk_app/domain/api_client/network_client.dart';
-import 'package:vk_app/configuration/configuration.dart';
 
 class NewsFeedApiClient {
   final _networkClient = NetworkClient();
 
   Future<NewsFeedResponse> getNewsFeed(
-      String? accessToken, String? startFrom) async {
+    String? accessToken,
+    String? startFrom,
+    String versionApi,
+  ) async {
     parser(dynamic json) {
       final jsonMap = json as Map<String, dynamic>;
       final jsonResponse = JsonResponse.fromJson(jsonMap);
@@ -18,7 +20,7 @@ class NewsFeedApiClient {
       'filters': 'post',
       'start_from': startFrom,
       'access_token': accessToken,
-      'v': Configuration.versionApi,
+      'v': versionApi,
     };
 
     final result = _networkClient.post(
