@@ -1,34 +1,18 @@
 import 'package:flutter/material.dart';
 
 import 'package:flutter_slidable/flutter_slidable.dart';
+import 'package:provider/provider.dart';
 
 import 'package:vk_app/ui/widgets/chats/chats_widget_model.dart';
-import 'package:vk_app/Library/Widgets/Inherited/provider.dart';
 import 'package:vk_app/resources/resources.dart';
 import 'package:vk_app/theme/app_colors.dart';
 
-class ChatsWidget extends StatefulWidget {
+class ChatsWidget extends StatelessWidget {
   const ChatsWidget({super.key});
 
   @override
-  State<ChatsWidget> createState() => _ChatsWidgetState();
-}
-
-class _ChatsWidgetState extends State<ChatsWidget> {
-  final _model = ChatsWidgetModel();
-
-  @override
   Widget build(BuildContext context) {
-    return NotifierProvider(
-      model: _model,
-      child: const _ChatsWidgetBody(),
-    );
-  }
-
-  @override
-  void dispose() {
-    _model.dispose();
-    super.dispose();
+    return const _ChatsWidgetBody();
   }
 }
 
@@ -68,6 +52,8 @@ class _ChatsActionsWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final model = context.read<ChatsWidgetModel>();
+
     return Row(
       children: [
         InkWell(
@@ -87,8 +73,7 @@ class _ChatsActionsWidget extends StatelessWidget {
         InkWell(
           splashColor: Colors.transparent,
           highlightColor: Colors.transparent,
-          onTap: () => NotifierProvider.read<ChatsWidgetModel>(context)
-              ?.showForm(context),
+          onTap: () => model.showForm(context),
           child: const Icon(
             Icons.create,
             color: AppColors.chatActionIcon,
@@ -108,7 +93,7 @@ class _ChatListWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final chatsCount =
-        NotifierProvider.watch<ChatsWidgetModel>(context)?.chats.length ?? 0;
+        context.select((ChatsWidgetModel model) => model.chats.length);
 
     return ListView.builder(
       itemCount: chatsCount,
@@ -128,7 +113,7 @@ class _ChatsListRowWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final model = NotifierProvider.read<ChatsWidgetModel>(context)!;
+    final model = context.read<ChatsWidgetModel>();
     final chat = model.chats[indexInList];
 
     return Slidable(

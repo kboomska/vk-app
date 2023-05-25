@@ -1,34 +1,17 @@
 import 'package:flutter/material.dart';
 
+import 'package:provider/provider.dart';
+
 import 'package:vk_app/ui/widgets/message_form/message_form_widget_model.dart';
-import 'package:vk_app/Library/Widgets/Inherited/provider.dart';
 import 'package:vk_app/theme/app_text_field.dart';
 import 'package:vk_app/theme/app_colors.dart';
 
-class MessageFormWidget extends StatefulWidget {
-  final chatKey;
-
-  const MessageFormWidget({super.key, required this.chatKey});
-
-  @override
-  State<MessageFormWidget> createState() => _MessageFormWidgetState();
-}
-
-class _MessageFormWidgetState extends State<MessageFormWidget> {
-  late MessageFormWidgetModel _model;
-
-  @override
-  void initState() {
-    super.initState();
-    _model = MessageFormWidgetModel(chatKey: widget.chatKey);
-  }
+class MessageFormWidget extends StatelessWidget {
+  const MessageFormWidget({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return NotifierProvider(
-      model: _model,
-      child: const _MessageFormWidgetBody(),
-    );
+    return const _MessageFormWidgetBody();
   }
 }
 
@@ -46,7 +29,7 @@ class _MessageFormWidgetBodyState extends State<_MessageFormWidgetBody> {
 
   @override
   Widget build(BuildContext context) {
-    final model = NotifierProvider.watch<MessageFormWidgetModel>(context);
+    final model = context.watch<MessageFormWidgetModel>();
 
     return Padding(
       padding: const EdgeInsets.symmetric(
@@ -68,17 +51,17 @@ class _MessageFormWidgetBodyState extends State<_MessageFormWidgetBody> {
                 hintText: 'Сообщение',
               ),
               keyboardType: TextInputType.multiline,
-              onChanged: (value) => model?.messageText = value,
+              onChanged: (value) => model.messageText = value,
             ),
           ),
-          if (model?.isMessage == true) ...[
+          if (model.isMessage == true) ...[
             const SizedBox(width: 10),
             InkWell(
               splashColor: Colors.transparent,
               highlightColor: Colors.transparent,
               onTap: () {
-                if (model?.isSpaceOnly == false) {
-                  model?.saveMessage(context);
+                if (model.isSpaceOnly == false) {
+                  model.saveMessage(context);
                   messageTextController.text = '';
                 }
               },

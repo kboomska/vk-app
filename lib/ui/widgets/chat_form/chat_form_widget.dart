@@ -1,26 +1,17 @@
 import 'package:flutter/material.dart';
 
+import 'package:provider/provider.dart';
+
 import 'package:vk_app/ui/widgets/chat_form/chat_form_widget_model.dart';
-import 'package:vk_app/Library/Widgets/Inherited/provider.dart';
 import 'package:vk_app/theme/app_text_field.dart';
 import 'package:vk_app/theme/app_colors.dart';
 
-class ChatFormWidget extends StatefulWidget {
+class ChatFormWidget extends StatelessWidget {
   const ChatFormWidget({super.key});
 
   @override
-  State<ChatFormWidget> createState() => _ChatFormWidgetState();
-}
-
-class _ChatFormWidgetState extends State<ChatFormWidget> {
-  final _model = ChatFormWidgetModel();
-
-  @override
   Widget build(BuildContext context) {
-    return NotifierProvider(
-      model: _model,
-      child: const _ChatFormWidgetBody(),
-    );
+    return const _ChatFormWidgetBody();
   }
 }
 
@@ -29,10 +20,12 @@ class _ChatFormWidgetBody extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final model = NotifierProvider.watch<ChatFormWidgetModel>(context);
+    final model = context.read<ChatFormWidgetModel>();
+    final isValid =
+        context.select((ChatFormWidgetModel model) => model.isValid);
 
     InkWell doneActive = InkWell(
-      onTap: () => model?.saveChat(context),
+      onTap: () => model.saveChat(context),
       splashColor: Colors.transparent,
       highlightColor: Colors.transparent,
       child: const Align(
@@ -61,7 +54,7 @@ class _ChatFormWidgetBody extends StatelessWidget {
         backgroundColor: AppColors.appBackgroundColor,
         iconTheme: const IconThemeData(color: AppColors.iconBlue),
         elevation: 0,
-        leading: model?.isValid == true ? doneActive : doneInactive,
+        leading: isValid ? doneActive : doneInactive,
         centerTitle: true,
         title: const Text(
           'Начать общение',
@@ -75,7 +68,7 @@ class _ChatFormWidgetBody extends StatelessWidget {
           InkWell(
             splashColor: Colors.transparent,
             highlightColor: Colors.transparent,
-            onTap: () => model?.closeForm(context),
+            onTap: () => model.closeForm(context),
             child: const CircleAvatar(
               radius: 12,
               backgroundColor: AppColors.closeIconBackground,
@@ -111,8 +104,9 @@ class _ChatNameWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final model = NotifierProvider.watch<ChatFormWidgetModel>(context);
-    final errorText = model?.errorText;
+    final model = context.read<ChatFormWidgetModel>();
+    final errorText =
+        context.select((ChatFormWidgetModel model) => model.errorText);
 
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
@@ -124,8 +118,8 @@ class _ChatNameWidget extends StatelessWidget {
             hintText: 'Новый чат',
             isError: errorText != null,
           ),
-          onEditingComplete: () => model?.saveChat(context),
-          onChanged: (value) => model?.chatName = value,
+          onEditingComplete: () => model.saveChat(context),
+          onChanged: (value) => model.chatName = value,
         ),
         if (errorText != null) ...[
           const SizedBox(

@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 
 import 'package:flutter_slidable/flutter_slidable.dart';
+import 'package:provider/provider.dart';
 
-import 'package:vk_app/ui/widgets/message_form/message_form_widget.dart';
 import 'package:vk_app/ui/widgets/messages/messages_widget_model.dart';
-import 'package:vk_app/Library/Widgets/Inherited/provider.dart';
+import 'package:vk_app/domain/factories/screen_factory.dart';
 import 'package:vk_app/theme/app_colors.dart';
 
 class MessagesWidgetConfiguration {
@@ -14,36 +14,12 @@ class MessagesWidgetConfiguration {
   MessagesWidgetConfiguration(this.chatKey, this.title);
 }
 
-class MessagesWidget extends StatefulWidget {
-  final MessagesWidgetConfiguration configuration;
-
-  const MessagesWidget({super.key, required this.configuration});
-
-  @override
-  State<MessagesWidget> createState() => _MessagesWidgetState();
-}
-
-class _MessagesWidgetState extends State<MessagesWidget> {
-  late MessagesWidgetModel _model;
-
-  @override
-  void initState() {
-    super.initState();
-    _model = MessagesWidgetModel(configuration: widget.configuration);
-  }
+class MessagesWidget extends StatelessWidget {
+  const MessagesWidget({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return NotifierProvider(
-      model: _model,
-      child: const _MessagesWidgetBody(),
-    );
-  }
-
-  @override
-  void dispose() {
-    _model.dispose();
-    super.dispose();
+    return const _MessagesWidgetBody();
   }
 }
 
@@ -52,9 +28,11 @@ class _MessagesWidgetBody extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final model = NotifierProvider.watch<MessagesWidgetModel>(context);
-    final chatName = model?.configuration.title ?? 'DELETED';
-    final chatKey = model?.configuration.chatKey;
+    final screenFactory = ScreenFactory();
+    final configuration =
+        context.select((MessagesWidgetModel model) => model.configuration);
+    final chatName = configuration.title;
+    final chatKey = configuration.chatKey;
 
     return Scaffold(
       appBar: AppBar(
@@ -92,7 +70,7 @@ class _MessagesWidgetBody extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.end,
           children: [
             const _MessagesListWidget(),
-            MessageFormWidget(chatKey: chatKey),
+            screenFactory.createMessageForm(chatKey),
           ],
         ),
       ),
@@ -106,8 +84,7 @@ class _MessagesListWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final messagesCount =
-        NotifierProvider.watch<MessagesWidgetModel>(context)?.messages.length ??
-            0;
+        context.select((MessagesWidgetModel model) => model.messages.length);
 
     return Flexible(
       child: ListView.builder(
@@ -131,7 +108,7 @@ class _MessageBubbleWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final model = NotifierProvider.read<MessagesWidgetModel>(context)!;
+    final model = context.read<MessagesWidgetModel>();
     final message = model.messages[indexInList];
     final time = message.time.toIso8601String().split(RegExp(r'[T:]'));
     final timeString = '${time[1]}:${time[2]}';
